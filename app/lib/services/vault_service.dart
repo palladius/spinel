@@ -21,47 +21,67 @@ class VaultFileNode {
 class VaultService {
   Future<List<VaultFileNode>> scanVault(String rootPath) async {
     final rootDir = Directory(rootPath);
-    if (!await rootDir.exists()) {
-      return [];
+    try {
+      if (!await rootDir.exists()) {
+        return [];
+      }
+    } catch (e) {
+      throw FileSystemException('Cannot access vault root directory', rootPath, OSError(e.toString(), 1));
     }
 
     final nodes = <VaultFileNode>[];
-    await _scanRecursive(rootDir, rootPath, nodes);
+    try {
+      await _scanRecursive(rootDir, rootPath, nodes);
+    } on FileSystemException {
+      rethrow;
+    } catch (e) {
+      throw FileSystemException('Failed to scan vault', rootPath, OSError(e.toString()));
+    }
     _sortNodes(nodes);
     return nodes;
   }
 
   Future<void> _scanRecursive(Directory currentDir, String rootPath, List<VaultFileNode> parentList) async {
-    final entities = await currentDir.list(followLinks: false).toList();
+    try {
+      final entities = await currentDir.list(followLinks: false).toList();
 
-    for (final entity in entities) {
-      final name = p.basename(entity.path);
-      if (name.startsWith('.') && name != '.spinel') {
-        continue; // Skip hidden folders
-      }
-      if (name == 'node_modules' || name == 'vendor') {
-        continue;
-      }
+      for (final entity in entities) {
+        final name = p.basename(entity.path);
+        if (name.startsWith('.') && name != '.spinel') {
+          continue; // Skip hidden folders
+        }
+        if (name == 'node_modules' || name == 'vendor' || name == 'build') {
+          continue;
+        }
 
-      final relPath = p.relative(entity.path, from: rootPath);
+        final relPath = p.relative(entity.path, from: rootPath);
 
-      if (entity is Directory) {
-        final dirNode = VaultFileNode(
-          path: entity.path,
-          relativePath: relPath,
-          name: name,
-          isDirectory: true,
-        );
-        parentList.add(dirNode);
-        await _scanRecursive(entity, rootPath, dirNode.children);
-      } else if (entity is File && entity.path.toLowerCase().endsWith('.md')) {
-        parentList.add(VaultFileNode(
-          path: entity.path,
-          relativePath: relPath,
-          name: name,
-          isDirectory: false,
-        ));
+        if (entity is Directory) {
+          final dirNode = VaultFileNode(
+            path: entity.path,
+            relativePath: relPath,
+            name: name,
+            isDirectory: true,
+          );
+          parentList.add(dirNode);
+          await _scanRecursive(entity, rootPath, dirNode.children);
+        } else if (entity is File && entity.path.toLowerCase().endsWith('.md')) {
+          parentList.add(VaultFileNode(
+            path: entity.path,
+            relativePath: relPath,
+            name: name,
+            isDirectory: false,
+          ));
+        }
       }
+    } on FileSystemException catch (e) {
+      // If a subfolder is unreadable, record error or skip gracefully
+      parentList.add(VaultFileNode(
+        path: currentDir.path,
+        relativePath: p.relative(currentDir.path, from: rootPath),
+        name: '${p.basename(currentDir.path)} (Permission Denied)',
+        isDirectory: true,
+      ));
     }
   }
 

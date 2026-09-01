@@ -108,7 +108,35 @@ class FileTreeSidebar extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator(color: SpinelTheme.rubyPrimary)),
-              error: (err, _) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red, fontSize: 11))),
+              error: (err, _) => Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.lock_outline, size: 32, color: SpinelTheme.rubyBright),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Access Restricted',
+                      style: TextStyle(color: SpinelTheme.brightText, fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$err',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: SpinelTheme.slateText, fontSize: 11),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: SpinelTheme.rubyPrimary,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: onSelectVault,
+                      child: const Text('Choose Folder', style: TextStyle(color: Colors.white, fontSize: 11)),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

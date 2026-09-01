@@ -51,5 +51,11 @@ void main() {
       expect(reloaded!.body, contains('Updated Content'));
       expect(reloaded.frontmatter['author'], equals('Riccardo'));
     });
+
+    test('handles non-existent vault gracefully', () async {
+      final nonExistentPath = '/tmp/non_existent_vault_${DateTime.now().millisecondsSinceEpoch}';
+      final nodes = await service.scanVault(nonExistentPath);
+      expect(nodes, isEmpty);
+    });
   });
 }

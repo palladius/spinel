@@ -2,12 +2,11 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
-## [0.2.1] - 2026-09-01
-### Changed
-- **Deep Ruby Palette**: Replaced raspberry/pink accents with deep Imperial Ruby (`#A61C2E`, `#8B0000`, `#B31B1B`) on dark charcoal obsidian (`#0D0D11`).
-- **Modal Frontmatter Editor**: Replaced the right sidebar with a clean modal popup dialog (`FrontmatterDialog`) with left-justified keys and right-justified values, plus dynamic add/remove property capabilities.
-- **Dedicated Vault Scoping**: Defaulted sidebar to `shared/fixtures/sample_vault` with an interactive "Switch / Open Vault" picker, preventing full-drive scanning.
-- **Interactive Markdown Elements**: Added interactive checkbox state rendering in visual mode and cleaner dual-mode split layout.
+## [0.2.2] - 2026-09-01
+### Fixed
+- **macOS Sandboxing & Filesystem Permissions**: Configured macOS `DebugProfile.entitlements` and `Release.entitlements` to allow direct local filesystem reading and writing for user vaults.
+- **Graceful Error Handling**: Added `try-catch` handling for `FileSystemException` and `PathAccessException` in `VaultService` and sidebar UI.
+- **Automated Tests**: Added automated unit tests in `vault_service_test.dart` for handling non-existent or restricted paths.
 
 ## [0.1.1] - 2026-09-01
 ### Added
