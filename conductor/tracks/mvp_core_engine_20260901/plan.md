@@ -1,18 +1,18 @@
 # Implementation Plan: Track 1 - Core Markdown Engine, Local Filesystem & Spinel CLI (MVP)
 
 ## Phase 1: Monorepo Scaffolding & Shared Infrastructure
-- [ ] Task: Set up root monorepo layout (`cli/`, `app/`, `server/`, `shared/`) with root `Justfile`
-- [ ] Task: Create sample test vault fixture with nested folders, YAML frontmatters, and markdown content
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Set up root monorepo layout (`cli/`, `app/`, `server/`, `shared/`) with root `Justfile`
+- [x] Task: Create sample test vault fixture with nested folders, YAML frontmatters, and markdown content
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Go CLI Engine (`cli/`) with TDD
-- [ ] Task: Write unit tests for vault initialization, filesystem traversal, and atomic write operations
-- [ ] Task: Implement `spinel init` command with default vault templates and `.gitignore` setup
-- [ ] Task: Write unit tests for YAML frontmatter parser and query matcher (`search-frontmatter`)
-- [ ] Task: Implement frontmatter indexing and search logic
-- [ ] Task: Write unit tests for full-text search engine with colorized CLI output
-- [ ] Task: Implement `spinel search` and `spinel export --tar` archive packager
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Write unit tests for vault initialization, filesystem traversal, and atomic write operations
+- [x] Task: Implement `spinel init` command with default vault templates and `.gitignore` setup
+- [x] Task: Write unit tests for YAML frontmatter parser and query matcher (`search-frontmatter`)
+- [x] Task: Implement frontmatter indexing and search logic
+- [x] Task: Write unit tests for full-text search engine with colorized CLI output
+- [x] Task: Implement `spinel search` and `spinel export --tar` archive packager
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: Flutter Vault Filesystem Engine (`app/`)
 - [ ] Task: Write unit and widget tests for local filesystem vault manager and file tree state
