@@ -24,3 +24,7 @@ build-cli:
 # Run Go CLI with arguments
 run-cli *ARGS:
     cd cli && go run ./cmd/spinel {{ARGS}}
+
+# Run Flutter desktop app on macOS
+run-app:
+    cd app && flutter run -d macos
