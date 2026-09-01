@@ -5,7 +5,19 @@ All notable changes to the Spinel project will be documented in this file.
 ## [0.1.1] - 2026-09-01
 ### Added
 - Added domain names and pricing study document (`docs/domain-names-study.md`).
-- Enriched `docs/REDSTONES.md` with additional red gemstones (Corundum, Pezzottaite, Taaffeite, Spessartine, Realgar, Vanadinite, Rhodochrosite, Red Zircon/Hyacinth).
+- Verified WHOIS availability for `raspberyl.md` (and `pezzotta.md`).
+- Enriched `docs/REDSTONES.md` with additional red gemstones (Corundum, Pezzottaite/Raspberyl, Taaffeite, Spessartine, Realgar, Vanadinite, Rhodochrosite, Red Zircon/Hyacinth).
+
+## [0.2.0] - 2026-09-01
+### Added
+- Flutter Desktop / Mobile application scaffold in `app/`.
+- Ruby Dark gemstone UI theme (`SpinelTheme`) with `#E0115F` accents and Inter/JetBrains Mono typography.
+- `VaultService` for live local filesystem traversal, hierarchical tree scanning, and atomic note saving.
+- `DualModeEditor` supporting live Raw Markdown text mode, WYSIWYG Rendered mode, and Split-screen view.
+- Floating formatting toolbar for H1-H3, bold, italic, underline, lists, and task checkboxes.
+- `FrontmatterDrawer` inspector for visualizing and managing YAML metadata.
+- Complete Flutter unit and widget test suite in `app/test/`.
+- Conductor Track 1 (`mvp_core_engine_20260901`) marked as completed.
 
 ## [0.1.0] - 2026-09-01
 ### Added

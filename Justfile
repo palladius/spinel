@@ -7,11 +7,15 @@ list:
     @just -l
 
 # Run all tests across modules
-test: test-cli
+test: test-cli test-app
 
 # Run Go CLI unit and integration tests
 test-cli:
     cd cli && go test -v ./...
+
+# Run Flutter app unit and widget tests
+test-app:
+    cd app && flutter test
 
 # Build standalone Go CLI binary
 build-cli:

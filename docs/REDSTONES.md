@@ -17,7 +17,7 @@ A reference guide for red gemstones, minerals, and their inspiration in the **Sp
 | **Rhodolite** | Pyrope-Almandine blend | Lustrous raspberry-to-rose red garnet crystal. | **AVAILABLE** (`rhodolite.md`) |
 | **Spessartine** | $\text{Mn}_3\text{Al}_2(\text{SiO}_4)_3$ | Fiery mandarin-to-deep red garnet. | **AVAILABLE** (`spessartine.md`) |
 | **Bixbite (Red Beryl)** | $\text{Be}_3\text{Al}_2(\text{SiO}_3)_6\text{:Mn}$ | Ultra-rare vivid red beryl known as the "Red Emerald", found in Utah. | **AVAILABLE** (`bixbite.md`) |
-| **Pezzottaite** | $\text{Cs}(\text{Be}_2\text{Li})\text{Al}_2\text{Si}_6\text{O}_{18}$ | "Raspberry Beryl", rare cesium-rich gem named after Italian mineralogist Federico Pezzotta. | **AVAILABLE** (`pezzottaite.md`) 🇮🇹 |
+| **Pezzottaite (Raspberyl)** | $\text{Cs}(\text{Be}_2\text{Li})\text{Al}_2\text{Si}_6\text{O}_{18}$ | "Raspberry Beryl", rare cesium-rich raspberry-red gem named after Italian mineralogist Federico Pezzotta. Catchy synonym: **Raspberyl** (evoking Raspberry Pi!). | **AVAILABLE** (`raspberyl.md` ⭐ / `pezzotta.md`) 🇮🇹 🍓 |
 | **Taaffeite** | $\text{BeMgAl}_4\text{O}_8$ | Famous ultra-rare gemstone originally discovered already faceted and mistaken for Spinel! | **AVAILABLE** (`taaffeite.md`) |
 | **Rubellite** | Red Tourmaline ($\text{Na}(\text{Li},\text{Al})_3\text{Al}_6\dots$) | Vivid pink-to-deep ruby red elbaite tourmaline. | **AVAILABLE** (`rubellite.md`) |
 | **Carnelian** | $\text{SiO}_2$ (Chalcedony) | Fiery translucent red-orange quartz, historical stone of scribes and signet wax seals. | **AVAILABLE** (`carnelian.md`) |

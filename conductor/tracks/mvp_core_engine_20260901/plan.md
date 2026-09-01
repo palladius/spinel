@@ -15,19 +15,19 @@
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: Flutter Vault Filesystem Engine (`app/`)
-- [ ] Task: Write unit and widget tests for local filesystem vault manager and file tree state
-- [ ] Task: Implement reactive file tree sidebar with live directory watching
-- [ ] Task: Write tests for YAML frontmatter extraction and state inspector
-- [ ] Task: Implement Frontmatter Inspector side drawer in Flutter
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Write unit and widget tests for local filesystem vault manager and file tree state
+- [x] Task: Implement reactive file tree sidebar with live directory watching
+- [x] Task: Write tests for YAML frontmatter extraction and state inspector
+- [x] Task: Implement Frontmatter Inspector side drawer in Flutter
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 4: Dual-Mode Markdown Editor (`app/`)
-- [ ] Task: Write tests for Markdown document state synchronization between Raw text and AST nodes
-- [ ] Task: Implement Raw Markdown Mode with syntax highlighting and line numbers
-- [ ] Task: Implement WYSIWYG Rendered Mode for H1-H3, bold, italic, underline, lists, checkboxes, and embeds
-- [ ] Task: Implement floating formatting toolbar and seamless dual-mode toggle switch
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Write tests for Markdown document state synchronization between Raw text and AST nodes
+- [x] Task: Implement Raw Markdown Mode with syntax highlighting and line numbers
+- [x] Task: Implement WYSIWYG Rendered Mode for H1-H3, bold, italic, underline, lists, checkboxes, and embeds
+- [x] Task: Implement floating formatting toolbar and seamless dual-mode toggle switch
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 5: End-to-End Integration & CLI Verification
-- [ ] Task: Test end-to-end integration: initialize vault with CLI, edit in GUI, search in CLI, and export `.tar.gz`
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Test end-to-end integration: initialize vault with CLI, edit in GUI, search in CLI, and export `.tar.gz`
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)

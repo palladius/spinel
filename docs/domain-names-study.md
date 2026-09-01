@@ -34,10 +34,11 @@ The following table evaluates candidate names, their etymology/symbolism, and es
 | Gemstone Candidate | Etymology & Meaning | `.md` (Markdown Vibe) | `.dev` (Google TLD) | `.app` (Modern App) | `.tools` / `.run` | `.org` / `.cc` |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Spinel** ⭐ | Latin *spina* (spine/thorn); the classic ruby twin | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
+| **Raspberyl** 🍓⭐ | "Raspberry Beryl" (syn. for Pezzottaite); evokes Raspberry Pi & Markdown! | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
 | **Pyrope** 💥 | Greek *pyrōpos* ("fire-eyed"); blood-red garnet | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
 | **Corundum** 🏛️ | Tamil *kurundam*; parent mineral of Ruby & Sapphire | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
 | **Taaffeite** 🔍 | Named after Richard Taaffe; discovered mistaken for Spinel! | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
-| **Pezzottaite** 🇮🇹 | "Raspberry Beryl" named after Federico Pezzotta | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
+| **Pezzottaite** 🇮🇹 | Mineral name after Federico Pezzotta (CLI alias: `pezzotta`) | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
 | **Rubellite** 🌸 | Latin *rubellus* (reddish); vivid red/pink tourmaline | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
 | **Almandine** 🔮 | Ancient city Alabanda; deep crimson-violet garnet | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
 | **Rhodolite** 🌹 | Greek *rhodon* (rose); raspberry garnet crystal | **CHF 39.49** | ~$12.87/yr | ~$14.93/yr | ~$25.00/yr | ~$10.00/yr |
@@ -104,9 +105,11 @@ A comparison of cumulative holding costs over 1, 3, and 5 years across TLD strat
 * **Backstory:** The only gemstone originally identified from a cut and faceted specimen, which had been previously bought as a Spinel!
 * **Metaphor:** Uncovering the hidden beauty in structured markdown notes.
 
-### 5. `pezzottaite.dev` / `pezzottaite.md` (The "Italian Spark" Angle 🇮🇹)
-* **Backstory:** Distinct raspberry-red cesium beryl named after Italian mineralogist Federico Pezzotta of the Museo Civico di Storia Naturale di Milano.
-* **Metaphor:** Italian craftsmanship and elegant code design.
+### 5. `raspberyl.md` / `raspberyl.app` (The "Raspberry Pi + Beryl" Angle 🍓🇮🇹)
+* **Backstory:** *Raspberyl* is the popular trade name for **Pezzottaite** (raspberry beryl), discovered in Madagascar and named after Milanese mineralogist Federico Pezzotta.
+* **Metaphor:** Evokes the DIY hacker / Raspberry Pi spirit combined with precious crystal precision.
+* **CLI Power Move:** The project domain can be **`raspberyl.md`**, while the snappy CLI tool is named **`pezzotta`** (e.g. `pezzotta init`, `pezzotta sync`, `pezzotta search`) or `raspberyl`!
+* **Domain Status:** **100% AVAILABLE** (`raspberyl.md` via `nic.md` / Infomaniak at CHF 39.49).
 
 ### 6. `carnelian.dev` / `carnelian.md` (The "Scribe's Stone" Angle)
 * **Backstory:** Historically worn by Roman scribes and used for signet rings and wax seals because hot wax did not stick to it.
