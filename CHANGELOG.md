@@ -2,6 +2,13 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
+## [0.2.1] - 2026-09-01
+### Changed
+- **Deep Ruby Palette**: Replaced raspberry/pink accents with deep Imperial Ruby (`#A61C2E`, `#8B0000`, `#B31B1B`) on dark charcoal obsidian (`#0D0D11`).
+- **Modal Frontmatter Editor**: Replaced the right sidebar with a clean modal popup dialog (`FrontmatterDialog`) with left-justified keys and right-justified values, plus dynamic add/remove property capabilities.
+- **Dedicated Vault Scoping**: Defaulted sidebar to `shared/fixtures/sample_vault` with an interactive "Switch / Open Vault" picker, preventing full-drive scanning.
+- **Interactive Markdown Elements**: Added interactive checkbox state rendering in visual mode and cleaner dual-mode split layout.
+
 ## [0.1.1] - 2026-09-01
 ### Added
 - Added domain names and pricing study document (`docs/domain-names-study.md`).
@@ -16,6 +23,7 @@ All notable changes to the Spinel project will be documented in this file.
 - `DualModeEditor` supporting live Raw Markdown text mode, WYSIWYG Rendered mode, and Split-screen view.
 - Floating formatting toolbar for H1-H3, bold, italic, underline, lists, and task checkboxes.
 - `FrontmatterDrawer` inspector for visualizing and managing YAML metadata.
+- `docs/NAMING_PROPOSAL.md` formalizing Raspberyl / Pezzotta CLI proposal.
 - Complete Flutter unit and widget test suite in `app/test/`.
 - Conductor Track 1 (`mvp_core_engine_20260901`) marked as completed.
 

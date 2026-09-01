@@ -2,25 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SpinelTheme {
-  static const Color darkBase = Color(0xFF0F0F12);
-  static const Color darkSurface = Color(0xFF16161A);
-  static const Color darkSidebar = Color(0xFF131316);
-  static const Color darkCard = Color(0xFF1E1E24);
-  static const Color rubyAccent = Color(0xFFE0115F);
-  static const Color rubyGlow = Color(0xFFD81159);
-  static const Color slateText = Color(0xFF94A1B2);
-  static const Color brightText = Color(0xFFFFFFFE);
-  static const Color borderColor = Color(0xFF2E2F3E);
+  // Deep royal ruby and obsidian palette
+  static const Color darkBase = Color(0xFF0D0D11);
+  static const Color darkSurface = Color(0xFF15151B);
+  static const Color darkSidebar = Color(0xFF111116);
+  static const Color darkCard = Color(0xFF1C1C24);
+  static const Color darkInput = Color(0xFF181820);
+  
+  // Authentic Deep Ruby / Crimson (no pink/raspberry!)
+  static const Color rubyPrimary = Color(0xFFA61C2E);  // Imperial dark ruby
+  static const Color rubyAccent = Color(0xFF8B0000);   // Deep blood ruby
+  static const Color rubyBright = Color(0xFFB31B1B);   // Garnet / rich crimson
+  static const Color rubyMuted = Color(0xFF5A0E17);    // Subtle ruby tint
+
+  static const Color slateText = Color(0xFF8E8E9A);
+  static const Color brightText = Color(0xFFEDEDF0);
+  static const Color borderColor = Color(0xFF262630);
 
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: darkBase,
-      primaryColor: rubyAccent,
+      primaryColor: rubyPrimary,
       colorScheme: const ColorScheme.dark(
-        primary: rubyAccent,
-        secondary: rubyGlow,
+        primary: rubyPrimary,
+        secondary: rubyBright,
         surface: darkSurface,
         onSurface: brightText,
       ),
@@ -31,12 +38,12 @@ class SpinelTheme {
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: darkSurface,
+        backgroundColor: darkSidebar,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
           color: brightText,
-          fontSize: 16,
+          fontSize: 15,
           fontWeight: FontWeight.w600,
         ),
       ),

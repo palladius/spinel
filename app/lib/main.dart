@@ -7,7 +7,7 @@ import 'package:app/state/vault_provider.dart';
 import 'package:app/theme/spinel_theme.dart';
 import 'package:app/widgets/dual_mode_editor.dart';
 import 'package:app/widgets/file_tree_sidebar.dart';
-import 'package:app/widgets/frontmatter_drawer.dart';
+import 'package:app/widgets/frontmatter_dialog.dart';
 
 void main() {
   runApp(const ProviderScope(child: SpinelApp()));
@@ -35,20 +35,83 @@ class SpinelHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
-  bool _showFrontmatter = true;
-
   @override
   void initState() {
     super.initState();
-    // Default to sample vault if present, or current directory
+    // Default strictly to sample_vault fixture
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final samplePath = p.join(Directory.current.path, '..', 'shared', 'fixtures', 'sample_vault');
-      if (Directory(samplePath).existsSync()) {
-        ref.read(vaultPathProvider.notifier).setPath(samplePath);
-      } else {
-        ref.read(vaultPathProvider.notifier).setPath(Directory.current.path);
+      final currentDir = Directory.current.path;
+      final candidates = [
+        p.join(currentDir, '..', 'shared', 'fixtures', 'sample_vault'),
+        p.join(currentDir, 'shared', 'fixtures', 'sample_vault'),
+        '/Users/ricc/Documents/antigravity/zealous-hypatia/shared/fixtures/sample_vault',
+      ];
+
+      for (final candidate in candidates) {
+        if (Directory(candidate).existsSync()) {
+          ref.read(vaultPathProvider.notifier).setPath(p.canonicalize(candidate));
+          return;
+        }
       }
+      ref.read(vaultPathProvider.notifier).setPath(currentDir);
     });
+  }
+
+  void _switchVaultDialog() {
+    final pathController = TextEditingController(text: ref.read(vaultPathProvider) ?? '');
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: SpinelTheme.darkCard,
+          title: const Text('Open / Switch Vault', style: TextStyle(color: SpinelTheme.brightText)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter the directory path of your markdown vault:',
+                style: TextStyle(color: SpinelTheme.slateText, fontSize: 13),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: pathController,
+                style: const TextStyle(color: SpinelTheme.brightText, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: '/path/to/markdown/vault',
+                  hintStyle: const TextStyle(color: SpinelTheme.slateText),
+                  filled: true,
+                  fillColor: SpinelTheme.darkInput,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(color: SpinelTheme.borderColor),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel', style: TextStyle(color: SpinelTheme.slateText)),
+              onPressed: () => Navigator.pop(ctx),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyPrimary),
+              child: const Text('Open Vault', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                final targetPath = pathController.text.trim();
+                if (targetPath.isNotEmpty && Directory(targetPath).existsSync()) {
+                  ref.read(vaultPathProvider.notifier).setPath(targetPath);
+                  ref.read(selectedNoteProvider.notifier).setNote(null);
+                  ref.invalidate(vaultNodesProvider);
+                }
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _createNewNoteDialog() {
@@ -64,10 +127,10 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
             autofocus: true,
             style: const TextStyle(color: SpinelTheme.brightText),
             decoration: const InputDecoration(
-              hintText: 'Note Title (e.g. My Architecture Idea)',
+              hintText: 'Note Title (e.g. SRE Architecture)',
               hintStyle: TextStyle(color: SpinelTheme.slateText),
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.borderColor)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.rubyAccent)),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.rubyPrimary)),
             ),
           ),
           actions: [
@@ -76,7 +139,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
               onPressed: () => Navigator.pop(ctx),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyAccent),
+              style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyPrimary),
               child: const Text('Create', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 final title = titleController.text.trim();
@@ -108,22 +171,30 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Text('💎 Spinel', style: TextStyle(fontWeight: FontWeight.bold, color: SpinelTheme.rubyAccent)),
+            const Text('💎 Spinel', style: TextStyle(fontWeight: FontWeight.bold, color: SpinelTheme.rubyBright)),
             if (vaultPath != null) ...[
-              const SizedBox(width: 8),
-              Text(
-                '• ${p.basename(vaultPath)}',
-                style: const TextStyle(fontSize: 12, color: SpinelTheme.slateText),
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: SpinelTheme.darkCard,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: SpinelTheme.borderColor),
+                ),
+                child: Text(
+                  p.basename(vaultPath),
+                  style: const TextStyle(fontSize: 11, color: SpinelTheme.slateText),
+                ),
               ),
             ],
             if (selectedNote != null && selectedNote.isModified) ...[
-              const SizedBox(width: 6),
-              const Text('● (modified)', style: TextStyle(fontSize: 11, color: SpinelTheme.rubyGlow)),
+              const SizedBox(width: 8),
+              const Text('● unsaved', style: TextStyle(fontSize: 11, color: Colors.orangeAccent)),
             ],
           ],
         ),
         actions: [
-          // View Mode Selector
+          // Mode Toggle
           SegmentedButton<EditorViewMode>(
             segments: const [
               ButtonSegment(
@@ -139,7 +210,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
               ButtonSegment(
                 value: EditorViewMode.renderedWysiwyg,
                 icon: Icon(Icons.auto_stories, size: 14),
-                label: Text('Rendered', style: TextStyle(fontSize: 11)),
+                label: Text('Visual', style: TextStyle(fontSize: 11)),
               ),
             ],
             selected: {editorMode},
@@ -150,24 +221,43 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
               visualDensity: VisualDensity.compact,
               backgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return SpinelTheme.rubyAccent.withOpacity(0.3);
+                  return SpinelTheme.rubyPrimary.withOpacity(0.35);
                 }
                 return SpinelTheme.darkCard;
               }),
             ),
           ),
-          const SizedBox(width: 12),
-          IconButton(
-            icon: Icon(
-              _showFrontmatter ? Icons.label : Icons.label_outline,
-              color: _showFrontmatter ? SpinelTheme.rubyAccent : SpinelTheme.slateText,
-              size: 20,
+          const SizedBox(width: 8),
+
+          // Frontmatter Popup Button
+          if (selectedNote != null)
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                foregroundColor: SpinelTheme.brightText,
+                backgroundColor: SpinelTheme.darkCard,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  side: const BorderSide(color: SpinelTheme.borderColor),
+                ),
+              ),
+              icon: const Icon(Icons.tune, size: 15, color: SpinelTheme.rubyBright),
+              label: Text(
+                'Metadata (${selectedNote.frontmatter.length})',
+                style: const TextStyle(fontSize: 11),
+              ),
+              onPressed: () {
+                FrontmatterDialog.show(context, selectedNote, () {
+                  setState(() {});
+                });
+              },
             ),
-            tooltip: 'Toggle Frontmatter Inspector',
-            onPressed: () => setState(() => _showFrontmatter = !_showFrontmatter),
-          ),
+
+          const SizedBox(width: 8),
+
+          // Save Button
           IconButton(
-            icon: const Icon(Icons.save_outlined, size: 20, color: SpinelTheme.brightText),
+            icon: const Icon(Icons.save_outlined, size: 19, color: SpinelTheme.brightText),
             tooltip: 'Save Note (Cmd+S)',
             onPressed: selectedNote == null
                 ? null
@@ -195,7 +285,10 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
       ),
       body: Row(
         children: [
-          FileTreeSidebar(onNewNote: _createNewNoteDialog),
+          FileTreeSidebar(
+            onNewNote: _createNewNoteDialog,
+            onSelectVault: _switchVaultDialog,
+          ),
           const VerticalDivider(color: SpinelTheme.borderColor, width: 1),
           Expanded(
             child: selectedNote == null
@@ -215,13 +308,6 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
                     },
                   ),
           ),
-          if (_showFrontmatter && selectedNote != null) ...[
-            const VerticalDivider(color: SpinelTheme.borderColor, width: 1),
-            FrontmatterDrawer(
-              document: selectedNote,
-              onUpdated: () => setState(() {}),
-            ),
-          ],
         ],
       ),
     );
