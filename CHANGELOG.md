@@ -2,13 +2,13 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
-## [0.3.0] - 2026-09-07
+## [0.4.0] - 2026-09-07
 ### Added
-- **Idempotent Terraform GCP Footprint (`infra/`)**: Fully declarative infrastructure provisioning Google Cloud SQL (PostgreSQL 16), Cloud Run v2 service, Secret Manager for credentials/master key, and least-privilege IAM bindings.
-- **Rails 8 API Cloud Backend (`server/`)**: API-only service on Ruby 3.4 / Rails 8 with PostgreSQL JSONB frontmatter indexing, bearer token authentication, soft delete support, and delta sync endpoints.
-- **Zero-Knowledge Encryption Engine (`cli/pkg/crypto`)**: AES-256-GCM symmetric encryption with SHA-256 key derivation ensuring notes are never stored unencrypted on the cloud.
-- **CLI Sync Command (`spinel sync`)**: Synchronizes local vaults with the Rails/Cloud SQL backend via content hashing and delta conflict resolution.
-- **Multi-Module Testing in Justfile**: Added `test-server` (RSpec), `test-infra` (Terraform fmt/validate), and full-suite orchestration via `just test`.
+- **Obsidian-Style Live Preview Engine (`SpinelLivePreviewController`)**: Dynamic hybrid markdown controller that renders rich headings, bold, italic, monospace chips, wikilinks, and tags while revealing raw tokens for precision editing on the active cursor line.
+- **Notion-Style Slash Command Menu (`SlashCommandMenu`)**: Floating command overlay triggered by `/` with keyboard navigation for inserting Headings (H1–H3), To-do lists, Code blocks, Blockquotes, Callout alerts, and Dividers.
+- **Wikilink `[[` & Tag `#` Autocompleter (`AutocompleteOverlay`)**: Contextual popovers fuzzy-matching vault note titles and frontmatter tags.
+- **Floating Formatting Toolbar**: Quick actions for bold, italic, underline, strikethrough, lists, task checkboxes, code, and links.
+- **Widget Test Suite (`wysiwyg_editor_test.dart`)**: 100% automated coverage for live preview spans, slash commands, and wikilink autocompletions.
 
 ## [0.1.1] - 2026-09-01
 ### Added
