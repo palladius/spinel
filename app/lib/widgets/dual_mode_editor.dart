@@ -5,6 +5,7 @@ import 'package:app/editor/live_preview_controller.dart';
 import 'package:app/editor/slash_command_overlay.dart';
 import 'package:app/editor/autocomplete_overlay.dart';
 import 'package:app/models/note_document.dart';
+import 'package:app/services/vault_service.dart';
 import 'package:app/state/vault_provider.dart';
 import 'package:app/theme/spinel_theme.dart';
 import 'package:app/widgets/floating_formatting_bar.dart';
@@ -71,7 +72,6 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
     final offset = selection.baseOffset;
     final textBeforeCaret = newText.substring(0, offset);
 
-    // Check for Slash Command trigger: "/" at line start or after space
     if (textBeforeCaret.endsWith('/') && (textBeforeCaret.length == 1 || textBeforeCaret[textBeforeCaret.length - 2] == '\n' || textBeforeCaret[textBeforeCaret.length - 2] == ' ')) {
       setState(() {
         _showSlashMenu = true;
@@ -101,7 +101,6 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
     final text = _controller.text;
     final offset = selection.baseOffset;
 
-    // Remove the triggering '/' and insert item
     if (offset > 0 && text[offset - 1] == '/') {
       final newText = text.substring(0, offset - 1) + item.insertionText + text.substring(offset);
       _controller.text = newText;
@@ -132,12 +131,17 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
     final noteSuggestions = <String>[];
 
     nodesAsync.whenData((nodes) {
-      for (final node in nodes) {
-        if (!node.isDirectory) {
-          final name = node.name.endsWith('.md') ? node.name.substring(0, node.name.length - 3) : node.name;
-          noteSuggestions.add(name);
+      void collect(List<VaultFileNode> list) {
+        for (final node in list) {
+          if (!node.isDirectory) {
+            final name = node.name.endsWith('.md') ? node.name.substring(0, node.name.length - 3) : node.name;
+            noteSuggestions.add(name);
+          } else {
+            collect(node.children);
+          }
         }
       }
+      collect(nodes);
     });
 
     return Stack(
@@ -146,8 +150,8 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
 
         // Floating Formatting Bar
         Positioned(
-          bottom: 24,
-          right: 24,
+          bottom: 16,
+          right: 16,
           child: FloatingFormattingBar(
             controller: _controller,
             onChanged: () => widget.onBodyChanged(_controller.text),
@@ -157,8 +161,8 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
         // Slash Command Popup
         if (_showSlashMenu)
           Positioned(
-            top: 60,
-            left: 40,
+            top: 40,
+            left: 30,
             child: SlashCommandMenu(
               onSelect: _applySlashCommand,
               onDismiss: _hideOverlays,
@@ -168,8 +172,8 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
         // Wikilink Autocomplete Popup
         if (_showWikilinkMenu)
           Positioned(
-            top: 60,
-            left: 40,
+            top: 40,
+            left: 30,
             child: AutocompleteOverlay(
               title: 'Insert Note Link',
               suggestions: noteSuggestions.isNotEmpty ? noteSuggestions : ['Sample Note', 'Project Architecture'],
@@ -201,21 +205,21 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
   Widget _buildRawEditor() {
     return Container(
       color: SpinelTheme.darkCanvas,
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       child: TextField(
         controller: _controller,
         maxLines: null,
         expands: true,
         style: const TextStyle(
           fontFamily: 'monospace',
-          fontSize: 13.5,
+          fontSize: 12.5,
           color: SpinelTheme.brightText,
-          height: 1.6,
+          height: 1.4,
         ),
         decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: 'Start writing markdown or type / for commands...',
-          hintStyle: TextStyle(color: SpinelTheme.slateText),
+          hintStyle: TextStyle(color: SpinelTheme.slateMuted),
         ),
       ),
     );
@@ -224,24 +228,24 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
   Widget _buildVisualView() {
     return Container(
       color: SpinelTheme.darkCanvas,
-      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Markdown(
         data: _controller.text,
         selectable: true,
         styleSheet: MarkdownStyleSheet.fromTheme(SpinelTheme.darkTheme).copyWith(
-          h1: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: SpinelTheme.brightText),
-          h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: SpinelTheme.rubyBright),
-          h3: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: SpinelTheme.brightText),
-          p: const TextStyle(fontSize: 14, height: 1.7, color: SpinelTheme.brightText),
+          h1: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: SpinelTheme.brightText),
+          h2: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: SpinelTheme.rubyBright),
+          h3: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, color: SpinelTheme.brightText),
+          p: const TextStyle(fontSize: 13, height: 1.45, color: SpinelTheme.brightText),
           code: const TextStyle(
             fontFamily: 'monospace',
             backgroundColor: SpinelTheme.darkCard,
             color: SpinelTheme.rubyLight,
           ),
           blockquoteDecoration: BoxDecoration(
-            border: const Border(left: BorderSide(color: SpinelTheme.rubyPrimary, width: 3)),
-            color: SpinelTheme.darkCard.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(4),
+            border: const Border(left: BorderSide(color: SpinelTheme.rubyPrimary, width: 2.5)),
+            color: SpinelTheme.darkCard.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(3),
           ),
         ),
       ),
