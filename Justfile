@@ -6,8 +6,8 @@ default: list
 list:
     @just -l
 
-# Run all tests across modules
-test: test-cli test-app
+# Run all tests across modules (Go CLI, Flutter App, Rails Server, Terraform)
+test: test-cli test-app test-server test-infra
 
 # Run Go CLI unit and integration tests
 test-cli:
@@ -16,6 +16,14 @@ test-cli:
 # Run Flutter app unit and widget tests
 test-app:
     cd app && flutter test
+
+# Run Rails 8 API backend RSpec test suite
+test-server:
+    cd server && bundle exec rspec
+
+# Validate Terraform infrastructure
+test-infra:
+    cd infra && terraform fmt -check && terraform validate
 
 # Build standalone Go CLI binary
 build-cli:

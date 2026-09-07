@@ -1,0 +1,186 @@
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.0ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'test', '2026-09-07 10:02:47.716806', '2026-09-07 10:02:47.716806') RETURNING "key"[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateVaultsAndNotes (20260902000001)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN immediate TRANSACTION[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "vaults" ("id" varchar NOT NULL PRIMARY KEY, "name" varchar NOT NULL, "api_key" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_vaults_on_api_key" ON "vaults" ("api_key")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "notes" ("id" varchar NOT NULL PRIMARY KEY, "vault_id" varchar NOT NULL, "relative_path" varchar NOT NULL, "encrypted_body" text NOT NULL, "frontmatter" json DEFAULT '{}', "content_hash" varchar NOT NULL, "version" integer DEFAULT 1 NOT NULL, "deleted_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_notes_on_vault_id_and_relative_path" ON "notes" ("vault_id", "relative_path")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_notes_on_vault_id" ON "notes" ("vault_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_notes_on_updated_at" ON "notes" ("updated_at")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_notes_on_deleted_at" ON "notes" ("deleted_at")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260902000001') RETURNING "version"[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mCOMMIT TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_915013a756595a404088f780335a6d7014c989c83c1bebf2"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.1ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "0d462bc5-6900-4f50-9d83-adc0d8d098d7"], ["name", "Test Vault"], ["api_key", "spk_915013a756595a404088f780335a6d7014c989c83c1bebf2"], ["created_at", "2026-09-07 10:02:47.744715"], ["updated_at", "2026-09-07 10:02:47.744715"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "1ebfc178-33ab-4469-b17b-745c59235052"], ["vault_id", "0d462bc5-6900-4f50-9d83-adc0d8d098d7"], ["relative_path", "01_Daily/today.md"], ["encrypted_body", "enc_data_12345"], ["frontmatter", "{\"tags\":[\"sre\",\"cloud\"],\"author\":\"Riccardo\"}"], ["content_hash", "sha256_abcdef"], ["version", 1], ["deleted_at", nil], ["created_at", "2026-09-07 10:02:47.747192"], ["updated_at", "2026-09-07 10:02:47.747192"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "0d462bc5-6900-4f50-9d83-adc0d8d098d7"]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "0d462bc5-6900-4f50-9d83-adc0d8d098d7"]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "0d462bc5-6900-4f50-9d83-adc0d8d098d7"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_d617cf919c9b28c254d98eea00c95353f2130d0f4f77c1fe"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "b288abb5-4cb5-4e0c-9311-15240d0e838b"], ["name", "Test Vault"], ["api_key", "spk_d617cf919c9b28c254d98eea00c95353f2130d0f4f77c1fe"], ["created_at", "2026-09-07 10:02:47.752088"], ["updated_at", "2026-09-07 10:02:47.752088"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "5c7d58b6-a4d5-458f-8987-0be3a6bc81c5"], ["vault_id", "b288abb5-4cb5-4e0c-9311-15240d0e838b"], ["relative_path", "temp.md"], ["encrypted_body", "enc"], ["frontmatter", "{}"], ["content_hash", "h1"], ["version", 1], ["deleted_at", nil], ["created_at", "2026-09-07 10:02:47.752486"], ["updated_at", "2026-09-07 10:02:47.752486"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Update (0.1ms)[0m  [1m[33mUPDATE "notes" SET "version" = ?, "deleted_at" = ?, "updated_at" = ? WHERE "notes"."id" = ?[0m  [["version", 2], ["deleted_at", "2026-09-07 10:02:47.752765"], ["updated_at", "2026-09-07 10:02:47.752841"], ["id", "5c7d58b6-a4d5-458f-8987-0be3a6bc81c5"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mNote Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL AND "notes"."id" = ? LIMIT ?[0m  [["vault_id", "b288abb5-4cb5-4e0c-9311-15240d0e838b"], ["id", "5c7d58b6-a4d5-458f-8987-0be3a6bc81c5"], ["LIMIT", 1]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "b288abb5-4cb5-4e0c-9311-15240d0e838b"]]
+  [1m[36mNote Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NOT NULL AND "notes"."id" = ? LIMIT ?[0m  [["vault_id", "b288abb5-4cb5-4e0c-9311-15240d0e838b"], ["id", "5c7d58b6-a4d5-458f-8987-0be3a6bc81c5"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_24280f905f9a1efe735e399940f79c2ba0a228e4257ca919"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "32f89999-c765-45ca-b494-b5568dfc996f"], ["name", "My Vault"], ["api_key", "spk_24280f905f9a1efe735e399940f79c2ba0a228e4257ca919"], ["created_at", "2026-09-07 10:02:47.754130"], ["updated_at", "2026-09-07 10:02:47.754130"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_93751f9b21fb7c4594f4691b0d9f4cc9ef33c2b8637a4a80"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "2b76ad6d-05db-4ba4-81dc-5f8ee5fb7731"], ["name", "Query Vault"], ["api_key", "spk_93751f9b21fb7c4594f4691b0d9f4cc9ef33c2b8637a4a80"], ["created_at", "2026-09-07 10:02:47.755878"], ["updated_at", "2026-09-07 10:02:47.755878"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "316153f2-d753-4c78-a4d7-074e476f7ff0"], ["vault_id", "2b76ad6d-05db-4ba4-81dc-5f8ee5fb7731"], ["relative_path", "sre/incident.md"], ["encrypted_body", "enc_body"], ["frontmatter", "{\"service\":\"CloudSQL\",\"priority\":\"P1\"}"], ["content_hash", "hash_sre"], ["version", 1], ["deleted_at", nil], ["created_at", "2026-09-07 10:02:47.756297"], ["updated_at", "2026-09-07 10:02:47.756297"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Started GET "/api/v1/notes/query?key=service&value=CloudSQL" for 127.0.0.1 at 2026-09-07 12:02:47 +0200
+Processing by Api::V1::NotesController#query as HTML
+  Parameters: {"key" => "service", "value" => "CloudSQL"}
+  [1m[36mVault Load (0.0ms)[0m  [1m[34mSELECT "vaults".* FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_93751f9b21fb7c4594f4691b0d9f4cc9ef33c2b8637a4a80"], ["LIMIT", 1]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "2b76ad6d-05db-4ba4-81dc-5f8ee5fb7731"]]
+Completed 200 OK in 1ms (Views: 0.1ms | ActiveRecord: 0.0ms (2 queries, 0 cached) | GC: 0.0ms)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+Started POST "/api/v1/sync/delta" for 127.0.0.1 at 2026-09-07 12:02:47 +0200
+Processing by Api::V1::SyncController#delta as HTML
+  Parameters: {"sync" => {}}
+Filter chain halted as :authenticate_vault! rendered or redirected
+Completed 401 Unauthorized in 0ms (Views: 0.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_84f079c4c5ba6d664f1081c8ef721a023140d573174cffdf"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "d0c7918c-8583-4004-bcee-b234615d802d"], ["name", "Cloud Vault"], ["api_key", "spk_84f079c4c5ba6d664f1081c8ef721a023140d573174cffdf"], ["created_at", "2026-09-07 10:02:47.761836"], ["updated_at", "2026-09-07 10:02:47.761836"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Started POST "/api/v1/sync/delta" for 127.0.0.1 at 2026-09-07 12:02:47 +0200
+Processing by Api::V1::SyncController#delta as HTML
+  Parameters: {"since" => nil, "deltas" => [{"relative_path" => "01_Daily/2026-09-02.md", "encrypted_body" => "ENCRYPTED_BLOB_AAA", "frontmatter" => {"title" => "Day 2", "tags" => ["sre"]}, "content_hash" => "hash_111", "deleted" => false}], "sync" => {"since" => nil, "deltas" => [{"relative_path" => "01_Daily/2026-09-02.md", "encrypted_body" => "ENCRYPTED_BLOB_AAA", "frontmatter" => {"title" => "Day 2", "tags" => ["sre"]}, "content_hash" => "hash_111", "deleted" => false}]}}
+  [1m[36mVault Load (0.0ms)[0m  [1m[34mSELECT "vaults".* FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_84f079c4c5ba6d664f1081c8ef721a023140d573174cffdf"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Load (0.1ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."relative_path" = ? LIMIT ?[0m  [["vault_id", "d0c7918c-8583-4004-bcee-b234615d802d"], ["relative_path", "01_Daily/2026-09-02.md"], ["LIMIT", 1]]
+  [1m[36mNote Create (0.0ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "193ac40d-de4d-4d40-997f-5e2ca97872ba"], ["vault_id", "d0c7918c-8583-4004-bcee-b234615d802d"], ["relative_path", "01_Daily/2026-09-02.md"], ["encrypted_body", "ENCRYPTED_BLOB_AAA"], ["frontmatter", "{\"title\":\"Day 2\",\"tags\":[\"sre\"]}"], ["content_hash", "hash_111"], ["version", 2], ["deleted_at", nil], ["created_at", "2026-09-07 10:02:47.763292"], ["updated_at", "2026-09-07 10:02:47.763292"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ?[0m  [["vault_id", "d0c7918c-8583-4004-bcee-b234615d802d"]]
+Completed 200 OK in 1ms (Views: 0.0ms | ActiveRecord: 0.2ms (4 queries, 0 cached) | GC: 0.0ms)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'test', '2026-09-07 10:03:48.447117', '2026-09-07 10:03:48.447118') RETURNING "key"[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateVaultsAndNotes (20260902000001)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN immediate TRANSACTION[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "vaults" ("id" varchar NOT NULL PRIMARY KEY, "name" varchar NOT NULL, "api_key" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_vaults_on_api_key" ON "vaults" ("api_key")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "notes" ("id" varchar NOT NULL PRIMARY KEY, "vault_id" varchar NOT NULL, "relative_path" varchar NOT NULL, "encrypted_body" text NOT NULL, "frontmatter" json DEFAULT '{}', "content_hash" varchar NOT NULL, "version" integer DEFAULT 1 NOT NULL, "deleted_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_notes_on_vault_id_and_relative_path" ON "notes" ("vault_id", "relative_path")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_notes_on_vault_id" ON "notes" ("vault_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_notes_on_updated_at" ON "notes" ("updated_at")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_notes_on_deleted_at" ON "notes" ("deleted_at")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260902000001') RETURNING "version"[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mCOMMIT TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_db9a1f6d4ade1c6bc5be6d61b2514059d014c6bcbe3d5a10"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "fc073ca6-5df2-4d1c-8865-9100dc412140"], ["name", "Test Vault"], ["api_key", "spk_db9a1f6d4ade1c6bc5be6d61b2514059d014c6bcbe3d5a10"], ["created_at", "2026-09-07 10:03:48.478968"], ["updated_at", "2026-09-07 10:03:48.478968"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "261e2fa2-234f-4d02-9ec5-8091eb82ac19"], ["vault_id", "fc073ca6-5df2-4d1c-8865-9100dc412140"], ["relative_path", "01_Daily/today.md"], ["encrypted_body", "enc_data_12345"], ["frontmatter", "{\"tags\":[\"sre\",\"cloud\"],\"author\":\"Riccardo\"}"], ["content_hash", "sha256_abcdef"], ["version", 1], ["deleted_at", nil], ["created_at", "2026-09-07 10:03:48.481537"], ["updated_at", "2026-09-07 10:03:48.481537"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "fc073ca6-5df2-4d1c-8865-9100dc412140"]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "fc073ca6-5df2-4d1c-8865-9100dc412140"]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "fc073ca6-5df2-4d1c-8865-9100dc412140"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_2765ad0cea703dcca871d917f4b83e6e1b859c54ffb5ca85"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "9bda84c5-89b8-45fa-971f-afa42709da8f"], ["name", "Test Vault"], ["api_key", "spk_2765ad0cea703dcca871d917f4b83e6e1b859c54ffb5ca85"], ["created_at", "2026-09-07 10:03:48.486280"], ["updated_at", "2026-09-07 10:03:48.486280"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "0e6eba80-6020-4ef1-b309-094252f450d5"], ["vault_id", "9bda84c5-89b8-45fa-971f-afa42709da8f"], ["relative_path", "temp.md"], ["encrypted_body", "enc"], ["frontmatter", "{}"], ["content_hash", "h1"], ["version", 1], ["deleted_at", nil], ["created_at", "2026-09-07 10:03:48.486696"], ["updated_at", "2026-09-07 10:03:48.486696"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Update (0.1ms)[0m  [1m[33mUPDATE "notes" SET "version" = ?, "deleted_at" = ?, "updated_at" = ? WHERE "notes"."id" = ?[0m  [["version", 2], ["deleted_at", "2026-09-07 10:03:48.486970"], ["updated_at", "2026-09-07 10:03:48.487041"], ["id", "0e6eba80-6020-4ef1-b309-094252f450d5"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mNote Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL AND "notes"."id" = ? LIMIT ?[0m  [["vault_id", "9bda84c5-89b8-45fa-971f-afa42709da8f"], ["id", "0e6eba80-6020-4ef1-b309-094252f450d5"], ["LIMIT", 1]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "9bda84c5-89b8-45fa-971f-afa42709da8f"]]
+  [1m[36mNote Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NOT NULL AND "notes"."id" = ? LIMIT ?[0m  [["vault_id", "9bda84c5-89b8-45fa-971f-afa42709da8f"], ["id", "0e6eba80-6020-4ef1-b309-094252f450d5"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_303bd6e00d590a26170658d35e1fa400100d136c3aa40999"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "99fd611f-f867-42fe-ae20-67bf39ba389c"], ["name", "My Vault"], ["api_key", "spk_303bd6e00d590a26170658d35e1fa400100d136c3aa40999"], ["created_at", "2026-09-07 10:03:48.488253"], ["updated_at", "2026-09-07 10:03:48.488253"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_9edb02daf6e2dbfea94e42f34271c8903df3f286d0738eff"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.0ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "10159e8b-ed57-4eb1-9f2e-bac05c70d91a"], ["name", "Query Vault"], ["api_key", "spk_9edb02daf6e2dbfea94e42f34271c8903df3f286d0738eff"], ["created_at", "2026-09-07 10:03:48.489833"], ["updated_at", "2026-09-07 10:03:48.489833"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "b94c94be-c23b-4015-ad3e-12c62418f3da"], ["vault_id", "10159e8b-ed57-4eb1-9f2e-bac05c70d91a"], ["relative_path", "sre/incident.md"], ["encrypted_body", "enc_body"], ["frontmatter", "{\"service\":\"CloudSQL\",\"priority\":\"P1\"}"], ["content_hash", "hash_sre"], ["version", 1], ["deleted_at", nil], ["created_at", "2026-09-07 10:03:48.490248"], ["updated_at", "2026-09-07 10:03:48.490248"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Started GET "/api/v1/notes/query?key=service&value=CloudSQL" for 127.0.0.1 at 2026-09-07 12:03:48 +0200
+Processing by Api::V1::NotesController#query as HTML
+  Parameters: {"key" => "service", "value" => "CloudSQL"}
+  [1m[36mVault Load (0.0ms)[0m  [1m[34mSELECT "vaults".* FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_9edb02daf6e2dbfea94e42f34271c8903df3f286d0738eff"], ["LIMIT", 1]]
+  [1m[36mNote Load (0.0ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."deleted_at" IS NULL[0m  [["vault_id", "10159e8b-ed57-4eb1-9f2e-bac05c70d91a"]]
+Completed 200 OK in 4ms (Views: 0.1ms | ActiveRecord: 0.1ms (2 queries, 0 cached) | GC: 3.3ms)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+Started POST "/api/v1/sync/delta" for 127.0.0.1 at 2026-09-07 12:03:48 +0200
+Processing by Api::V1::SyncController#delta as HTML
+  Parameters: {"sync" => {}}
+Filter chain halted as :authenticate_vault! rendered or redirected
+Completed 401 Unauthorized in 0ms (Views: 0.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mVault Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_c27723dd4720256b8ea62928dcffff6fef80198206aed2a0"], ["LIMIT", 1]]
+  [1m[36mVault Create (0.2ms)[0m  [1m[32mINSERT INTO "vaults" ("id", "name", "api_key", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "3dad69a2-ec14-4737-ac3c-448364c56280"], ["name", "Cloud Vault"], ["api_key", "spk_c27723dd4720256b8ea62928dcffff6fef80198206aed2a0"], ["created_at", "2026-09-07 10:03:48.500866"], ["updated_at", "2026-09-07 10:03:48.500866"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Started POST "/api/v1/sync/delta" for 127.0.0.1 at 2026-09-07 12:03:48 +0200
+Processing by Api::V1::SyncController#delta as HTML
+  Parameters: {"since" => nil, "deltas" => [{"relative_path" => "01_Daily/2026-09-02.md", "encrypted_body" => "ENCRYPTED_BLOB_AAA", "frontmatter" => {"title" => "Day 2", "tags" => ["sre"]}, "content_hash" => "hash_111", "deleted" => false}], "sync" => {"since" => nil, "deltas" => [{"relative_path" => "01_Daily/2026-09-02.md", "encrypted_body" => "ENCRYPTED_BLOB_AAA", "frontmatter" => {"title" => "Day 2", "tags" => ["sre"]}, "content_hash" => "hash_111", "deleted" => false}]}}
+  [1m[36mVault Load (0.0ms)[0m  [1m[34mSELECT "vaults".* FROM "vaults" WHERE "vaults"."api_key" = ? LIMIT ?[0m  [["api_key", "spk_c27723dd4720256b8ea62928dcffff6fef80198206aed2a0"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mNote Load (0.1ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ? AND "notes"."relative_path" = ? LIMIT ?[0m  [["vault_id", "3dad69a2-ec14-4737-ac3c-448364c56280"], ["relative_path", "01_Daily/2026-09-02.md"], ["LIMIT", 1]]
+  [1m[36mNote Create (0.1ms)[0m  [1m[32mINSERT INTO "notes" ("id", "vault_id", "relative_path", "encrypted_body", "frontmatter", "content_hash", "version", "deleted_at", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["id", "944563e7-d46e-42e3-8ce8-002fc3a512c3"], ["vault_id", "3dad69a2-ec14-4737-ac3c-448364c56280"], ["relative_path", "01_Daily/2026-09-02.md"], ["encrypted_body", "ENCRYPTED_BLOB_AAA"], ["frontmatter", "{\"title\":\"Day 2\",\"tags\":[\"sre\"]}"], ["content_hash", "hash_111"], ["version", 2], ["deleted_at", nil], ["created_at", "2026-09-07 10:03:48.503178"], ["updated_at", "2026-09-07 10:03:48.503178"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mNote Load (0.1ms)[0m  [1m[34mSELECT "notes".* FROM "notes" WHERE "notes"."vault_id" = ?[0m  [["vault_id", "3dad69a2-ec14-4737-ac3c-448364c56280"]]
+Completed 200 OK in 3ms (Views: 0.1ms | ActiveRecord: 0.3ms (4 queries, 0 cached) | GC: 0.3ms)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m

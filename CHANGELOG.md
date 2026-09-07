@@ -2,11 +2,13 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
-## [0.2.2] - 2026-09-01
-### Fixed
-- **macOS Sandboxing & Filesystem Permissions**: Configured macOS `DebugProfile.entitlements` and `Release.entitlements` to allow direct local filesystem reading and writing for user vaults.
-- **Graceful Error Handling**: Added `try-catch` handling for `FileSystemException` and `PathAccessException` in `VaultService` and sidebar UI.
-- **Automated Tests**: Added automated unit tests in `vault_service_test.dart` for handling non-existent or restricted paths.
+## [0.3.0] - 2026-09-07
+### Added
+- **Idempotent Terraform GCP Footprint (`infra/`)**: Fully declarative infrastructure provisioning Google Cloud SQL (PostgreSQL 16), Cloud Run v2 service, Secret Manager for credentials/master key, and least-privilege IAM bindings.
+- **Rails 8 API Cloud Backend (`server/`)**: API-only service on Ruby 3.4 / Rails 8 with PostgreSQL JSONB frontmatter indexing, bearer token authentication, soft delete support, and delta sync endpoints.
+- **Zero-Knowledge Encryption Engine (`cli/pkg/crypto`)**: AES-256-GCM symmetric encryption with SHA-256 key derivation ensuring notes are never stored unencrypted on the cloud.
+- **CLI Sync Command (`spinel sync`)**: Synchronizes local vaults with the Rails/Cloud SQL backend via content hashing and delta conflict resolution.
+- **Multi-Module Testing in Justfile**: Added `test-server` (RSpec), `test-infra` (Terraform fmt/validate), and full-suite orchestration via `just test`.
 
 ## [0.1.1] - 2026-09-01
 ### Added

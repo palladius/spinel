@@ -8,12 +8,13 @@ import (
 	"github.com/fatih/color"
 	"github.com/palladius/spinel/cli/pkg/export"
 	"github.com/palladius/spinel/cli/pkg/search"
+	syncpkg "github.com/palladius/spinel/cli/pkg/sync"
 	"github.com/palladius/spinel/cli/pkg/vault"
 	"github.com/spf13/cobra"
 )
 
 var (
-	version   = "0.1.0"
+	version   = "0.2.2"
 	vaultPath string
 )
 
@@ -114,6 +115,45 @@ func main() {
 		},
 	}
 
+	// sync command
+	syncCmd := &cobra.Command{
+		Use:   "sync",
+		Short: "Synchronize local vault with Cloud SQL / Rails backend using zero-knowledge encryption",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			remoteURL, _ := cmd.Flags().GetString("remote")
+			token, _ := cmd.Flags().GetString("token")
+			passphrase, _ := cmd.Flags().GetString("passphrase")
+
+			if remoteURL == "" {
+				return fmt.Errorf("--remote <url> is required (e.g. https://spinel-api.run.app)")
+			}
+			if token == "" {
+				token = os.Getenv("SPINEL_API_KEY")
+			}
+			if token == "" {
+				return fmt.Errorf("--token <api_key> or SPINEL_API_KEY environment variable is required")
+			}
+			if passphrase == "" {
+				passphrase = os.Getenv("SPINEL_PASSPHRASE")
+			}
+			if passphrase == "" {
+				return fmt.Errorf("--passphrase <passphrase> or SPINEL_PASSPHRASE environment variable is required")
+			}
+
+			color.Cyan("🔄 Synchronizing %s with %s...", vaultPath, remoteURL)
+			resp, err := syncpkg.PerformSync(vaultPath, remoteURL, token, passphrase)
+			if err != nil {
+				return err
+			}
+
+			color.Green("✅ Sync complete! %d local changes applied. %d remote updates received.", resp.AppliedCount, len(resp.ServerDeltas))
+			return nil
+		},
+	}
+	syncCmd.Flags().StringP("remote", "r", "", "Remote Spinel Rails API URL")
+	syncCmd.Flags().StringP("token", "t", "", "Vault API authorization token")
+	syncCmd.Flags().StringP("passphrase", "p", "", "Zero-knowledge encryption passphrase")
+
 	// export command
 	exportCmd := &cobra.Command{
 		Use:   "export",
@@ -159,7 +199,7 @@ func main() {
 		},
 	}
 
-	rootCmd.AddCommand(initCmd, searchCmd, searchFMCmd, exportCmd, versionCmd, listCmd)
+	rootCmd.AddCommand(initCmd, searchCmd, searchFMCmd, syncCmd, exportCmd, versionCmd, listCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
