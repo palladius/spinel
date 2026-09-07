@@ -24,12 +24,14 @@ class FileTreeSidebar extends ConsumerWidget {
     final vaultName = vaultPath != null ? p.basename(vaultPath) : 'Select Vault';
 
     return Container(
-      width: 250,
+      width: 230,
       color: SpinelTheme.darkSidebar,
       child: Column(
         children: [
+          // Sidebar Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            height: 38,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: SpinelTheme.borderColor)),
             ),
@@ -39,32 +41,39 @@ class FileTreeSidebar extends ConsumerWidget {
                 InkWell(
                   onTap: onSelectVault,
                   borderRadius: BorderRadius.circular(4),
-                  child: Row(
-                    children: [
-                      const Text('💎', style: TextStyle(fontSize: 15)),
-                      const SizedBox(width: 6),
-                      Text(
-                        vaultName.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.1,
-                          color: SpinelTheme.rubyBright,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                    child: Row(
+                      children: [
+                        const Text('💎', style: TextStyle(fontSize: 13)),
+                        const SizedBox(width: 6),
+                        Text(
+                          vaultName,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: SpinelTheme.softText,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.arrow_drop_down, size: 16, color: SpinelTheme.slateText),
-                    ],
+                        const SizedBox(width: 2),
+                        const Icon(Icons.keyboard_arrow_down, size: 14, color: SpinelTheme.slateText),
+                      ],
+                    ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.note_add_outlined, size: 18, color: SpinelTheme.brightText),
+                  icon: const Icon(Icons.add, size: 16, color: SpinelTheme.softText),
                   tooltip: 'New Note',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
                   onPressed: onNewNote,
                 ),
               ],
             ),
           ),
+
+          // File Tree
           Expanded(
             child: nodesAsync.when(
               data: (nodes) {
@@ -75,27 +84,21 @@ class FileTreeSidebar extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.folder_open, size: 32, color: SpinelTheme.slateText),
-                          const SizedBox(height: 8),
+                          const Icon(Icons.folder_open, size: 24, color: SpinelTheme.slateMuted),
+                          const SizedBox(height: 6),
                           const Text(
                             'Vault is empty',
-                            style: TextStyle(color: SpinelTheme.brightText, fontSize: 13, fontWeight: FontWeight.w600),
+                            style: TextStyle(color: SpinelTheme.softText, fontSize: 12, fontWeight: FontWeight.w500),
                           ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Create a note or choose another folder.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: SpinelTheme.slateText, fontSize: 11),
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: SpinelTheme.rubyPrimary,
+                          const SizedBox(height: 10),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: SpinelTheme.borderColor),
                               visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             ),
-                            icon: const Icon(Icons.add, size: 14, color: Colors.white),
-                            label: const Text('New Note', style: TextStyle(fontSize: 11, color: Colors.white)),
                             onPressed: onNewNote,
+                            child: const Text('New Note', style: TextStyle(fontSize: 11, color: SpinelTheme.brightText)),
                           ),
                         ],
                       ),
@@ -103,39 +106,14 @@ class FileTreeSidebar extends ConsumerWidget {
                   );
                 }
                 return ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  children: nodes.map((node) => _buildTreeNode(context, ref, node, selectedNote)).toList(),
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  children: nodes.map((node) => _buildTreeNode(context, ref, node, selectedNote, 0)).toList(),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator(color: SpinelTheme.rubyPrimary)),
+              loading: () => const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: SpinelTheme.rubyPrimary))),
               error: (err, _) => Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.lock_outline, size: 32, color: SpinelTheme.rubyBright),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Access Restricted',
-                      style: TextStyle(color: SpinelTheme.brightText, fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$err',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: SpinelTheme.slateText, fontSize: 11),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: SpinelTheme.rubyPrimary,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      onPressed: onSelectVault,
-                      child: const Text('Choose Folder', style: TextStyle(color: Colors.white, fontSize: 11)),
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.all(12.0),
+                child: Text('Error: $err', style: const TextStyle(color: Colors.redAccent, fontSize: 11)),
               ),
             ),
           ),
@@ -144,50 +122,78 @@ class FileTreeSidebar extends ConsumerWidget {
     );
   }
 
-  Widget _buildTreeNode(BuildContext context, WidgetRef ref, VaultFileNode node, dynamic selectedNote) {
+  Widget _buildTreeNode(BuildContext context, WidgetRef ref, VaultFileNode node, dynamic selectedNote, int depth) {
     if (node.isDirectory) {
-      return ExpansionTile(
-        dense: true,
-        initiallyExpanded: true,
-        leading: const Icon(Icons.folder_outlined, size: 16, color: SpinelTheme.rubyBright),
-        title: Text(
-          node.name,
-          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: SpinelTheme.brightText),
+      return Theme(
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
         ),
-        childrenPadding: const EdgeInsets.only(left: 14),
-        children: node.children.map((child) => _buildTreeNode(context, ref, child, selectedNote)).toList(),
+        child: ExpansionTile(
+          dense: true,
+          initiallyExpanded: true,
+          shape: const Border(),
+          collapsedShape: const Border(),
+          tilePadding: EdgeInsets.only(left: 6.0 + (depth * 10.0), right: 6.0),
+          minTileHeight: 26,
+          leading: const Icon(Icons.folder_outlined, size: 14, color: SpinelTheme.slateText),
+          title: Text(
+            node.name,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: SpinelTheme.softText,
+            ),
+          ),
+          childrenPadding: EdgeInsets.zero,
+          children: node.children.map((child) => _buildTreeNode(context, ref, child, selectedNote, depth + 1)).toList(),
+        ),
       );
     }
 
     final isSelected = selectedNote != null && selectedNote.filePath == node.path;
+    final displayName = node.name.endsWith('.md') ? node.name.substring(0, node.name.length - 3) : node.name;
 
-    return ListTile(
-      dense: true,
-      visualDensity: VisualDensity.compact,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-      selected: isSelected,
-      selectedTileColor: SpinelTheme.rubyPrimary.withOpacity(0.22),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      leading: Icon(
-        Icons.description_outlined,
-        size: 15,
-        color: isSelected ? SpinelTheme.rubyBright : SpinelTheme.slateText,
+    return Container(
+      height: 26,
+      margin: const EdgeInsets.symmetric(vertical: 1),
+      padding: EdgeInsets.only(left: 10.0 + (depth * 10.0), right: 6.0),
+      decoration: BoxDecoration(
+        color: isSelected ? SpinelTheme.rubyPrimary.withOpacity(0.25) : Colors.transparent,
+        borderRadius: BorderRadius.circular(4),
+        border: isSelected ? Border.all(color: SpinelTheme.rubyPrimary.withOpacity(0.4), width: 1) : null,
       ),
-      title: Text(
-        node.name.endsWith('.md') ? node.name.substring(0, node.name.length - 3) : node.name,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? SpinelTheme.brightText : SpinelTheme.slateText,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(4),
+        onTap: () async {
+          final vaultPath = ref.read(vaultPathProvider);
+          if (vaultPath == null) return;
+          final service = ref.read(vaultServiceProvider);
+          final doc = await service.loadNote(node.path, vaultPath);
+          ref.read(selectedNoteProvider.notifier).setNote(doc);
+        },
+        child: Row(
+          children: [
+            Icon(
+              Icons.description_outlined,
+              size: 13,
+              color: isSelected ? SpinelTheme.brightText : SpinelTheme.slateMuted,
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: isSelected ? SpinelTheme.brightText : SpinelTheme.slateText,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      onTap: () async {
-        final vaultPath = ref.read(vaultPathProvider);
-        if (vaultPath == null) return;
-        final service = ref.read(vaultServiceProvider);
-        final doc = await service.loadNote(node.path, vaultPath);
-        ref.read(selectedNoteProvider.notifier).setNote(doc);
-      },
     );
   }
 }

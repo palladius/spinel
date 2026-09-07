@@ -65,24 +65,26 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
       builder: (ctx) {
         return AlertDialog(
           backgroundColor: SpinelTheme.darkCard,
-          title: const Text('Open / Switch Vault', style: TextStyle(color: SpinelTheme.brightText)),
+          title: const Text('Open / Switch Vault', style: TextStyle(color: SpinelTheme.brightText, fontSize: 14)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Enter the directory path of your markdown vault:',
-                style: TextStyle(color: SpinelTheme.slateText, fontSize: 13),
+                'Enter directory path of your markdown vault:',
+                style: TextStyle(color: SpinelTheme.slateText, fontSize: 12),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               TextField(
                 controller: pathController,
-                style: const TextStyle(color: SpinelTheme.brightText, fontSize: 13),
+                style: const TextStyle(color: SpinelTheme.brightText, fontSize: 12.5),
                 decoration: InputDecoration(
                   hintText: '/path/to/markdown/vault',
                   hintStyle: const TextStyle(color: SpinelTheme.slateText),
                   filled: true,
                   fillColor: SpinelTheme.darkInput,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6),
                     borderSide: const BorderSide(color: SpinelTheme.borderColor),
@@ -93,12 +95,15 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text('Cancel', style: TextStyle(color: SpinelTheme.slateText)),
+              child: const Text('Cancel', style: TextStyle(color: SpinelTheme.slateText, fontSize: 12)),
               onPressed: () => Navigator.pop(ctx),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyPrimary),
-              child: const Text('Open Vault', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SpinelTheme.rubyPrimary,
+                visualDensity: VisualDensity.compact,
+              ),
+              child: const Text('Open Vault', style: TextStyle(color: Colors.white, fontSize: 12)),
               onPressed: () {
                 final targetPath = pathController.text.trim();
                 if (targetPath.isNotEmpty && Directory(targetPath).existsSync()) {
@@ -120,7 +125,6 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
     final selectedNote = ref.read(selectedNoteProvider);
     final vaultNodes = ref.read(vaultNodesProvider).value ?? [];
 
-    // Collect available directories in vault
     final folderList = <String>['/ (Root)'];
     void extractDirs(List<VaultFileNode> nodes) {
       for (final n in nodes) {
@@ -132,7 +136,6 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
     }
     extractDirs(vaultNodes);
 
-    // Default folder: current note's parent dir if any, otherwise first available or root
     String selectedFolder = folderList.first;
     if (selectedNote != null) {
       final parentDir = p.dirname(selectedNote.relativePath);
@@ -152,7 +155,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: SpinelTheme.darkCard,
-              title: const Text('Create New Note', style: TextStyle(color: SpinelTheme.brightText)),
+              title: const Text('Create New Note', style: TextStyle(color: SpinelTheme.brightText, fontSize: 14)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,20 +163,22 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
                   TextField(
                     controller: titleController,
                     autofocus: true,
-                    style: const TextStyle(color: SpinelTheme.brightText),
+                    style: const TextStyle(color: SpinelTheme.brightText, fontSize: 13),
                     decoration: const InputDecoration(
                       hintText: 'Note Title (e.g. SRE Architecture)',
-                      hintStyle: TextStyle(color: SpinelTheme.slateText),
+                      hintStyle: TextStyle(color: SpinelTheme.slateText, fontSize: 12),
+                      isDense: true,
                       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.borderColor)),
                       focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.rubyPrimary)),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text('Save in folder:', style: TextStyle(color: SpinelTheme.slateText, fontSize: 12)),
+                  const SizedBox(height: 14),
+                  const Text('Save in folder:', style: TextStyle(color: SpinelTheme.slateText, fontSize: 11.5)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     value: selectedFolder,
                     dropdownColor: SpinelTheme.darkCard,
+                    isDense: true,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: SpinelTheme.darkInput,
@@ -194,12 +199,12 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
               ),
               actions: [
                 TextButton(
-                  child: const Text('Cancel', style: TextStyle(color: SpinelTheme.slateText)),
+                  child: const Text('Cancel', style: TextStyle(color: SpinelTheme.slateText, fontSize: 12)),
                   onPressed: () => Navigator.pop(ctx),
                 ),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyPrimary),
-                  child: const Text('Create Note', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyPrimary, visualDensity: VisualDensity.compact),
+                  child: const Text('Create Note', style: TextStyle(color: Colors.white, fontSize: 12)),
                   onPressed: () async {
                     final title = titleController.text.trim();
                     if (title.isEmpty) return;
@@ -234,120 +239,134 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
     final vaultPath = ref.watch(vaultPathProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            const Text('💎 Spinel', style: TextStyle(fontWeight: FontWeight.bold, color: SpinelTheme.rubyBright)),
-            if (vaultPath != null) ...[
-              const SizedBox(width: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: SpinelTheme.darkCard,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: SpinelTheme.borderColor),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(40),
+        child: Container(
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: const BoxDecoration(
+            color: SpinelTheme.darkSidebar,
+            border: Border(bottom: BorderSide(color: SpinelTheme.borderColor)),
+          ),
+          child: Row(
+            children: [
+              const Text('💎', style: TextStyle(fontSize: 14)),
+              const SizedBox(width: 6),
+              const Text(
+                'Spinel',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: SpinelTheme.brightText),
+              ),
+              if (vaultPath != null) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: SpinelTheme.darkCard,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: SpinelTheme.borderColor),
+                  ),
+                  child: Text(
+                    p.basename(vaultPath),
+                    style: const TextStyle(fontSize: 10.5, color: SpinelTheme.slateText),
+                  ),
                 ),
-                child: Text(
-                  p.basename(vaultPath),
-                  style: const TextStyle(fontSize: 11, color: SpinelTheme.slateText),
+              ],
+              if (selectedNote != null && selectedNote.isModified) ...[
+                const SizedBox(width: 6),
+                const Text('● unsaved', style: TextStyle(fontSize: 10.5, color: Colors.amberAccent)),
+              ],
+              const Spacer(),
+
+              // View Mode Selector
+              SegmentedButton<EditorViewMode>(
+                showSelectedIcon: false,
+                segments: const [
+                  ButtonSegment(
+                    value: EditorViewMode.rawMarkdown,
+                    label: Text('Raw', style: TextStyle(fontSize: 11)),
+                  ),
+                  ButtonSegment(
+                    value: EditorViewMode.splitView,
+                    label: Text('Split', style: TextStyle(fontSize: 11)),
+                  ),
+                  ButtonSegment(
+                    value: EditorViewMode.renderedWysiwyg,
+                    label: Text('Live', style: TextStyle(fontSize: 11)),
+                  ),
+                ],
+                selected: {editorMode},
+                onSelectionChanged: (modes) {
+                  ref.read(editorModeProvider.notifier).setMode(modes.first);
+                },
+                style: ButtonStyle(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 8)),
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return SpinelTheme.rubyPrimary.withOpacity(0.35);
+                    }
+                    return Colors.transparent;
+                  }),
                 ),
               ),
-            ],
-            if (selectedNote != null && selectedNote.isModified) ...[
               const SizedBox(width: 8),
-              const Text('● unsaved', style: TextStyle(fontSize: 11, color: Colors.orangeAccent)),
-            ],
-          ],
-        ),
-        actions: [
-          // Mode Toggle
-          SegmentedButton<EditorViewMode>(
-            segments: const [
-              ButtonSegment(
-                value: EditorViewMode.rawMarkdown,
-                icon: Icon(Icons.code, size: 14),
-                label: Text('Raw', style: TextStyle(fontSize: 11)),
-              ),
-              ButtonSegment(
-                value: EditorViewMode.splitView,
-                icon: Icon(Icons.vertical_split, size: 14),
-                label: Text('Split', style: TextStyle(fontSize: 11)),
-              ),
-              ButtonSegment(
-                value: EditorViewMode.renderedWysiwyg,
-                icon: Icon(Icons.auto_stories, size: 14),
-                label: Text('Live Preview', style: TextStyle(fontSize: 11)),
-              ),
-            ],
-            selected: {editorMode},
-            onSelectionChanged: (modes) {
-              ref.read(editorModeProvider.notifier).setMode(modes.first);
-            },
-            style: ButtonStyle(
-              visualDensity: VisualDensity.compact,
-              backgroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return SpinelTheme.rubyPrimary.withOpacity(0.35);
-                }
-                return SpinelTheme.darkCard;
-              }),
-            ),
-          ),
-          const SizedBox(width: 8),
 
-          // Frontmatter Popup Button
-          if (selectedNote != null)
-            TextButton.icon(
-              style: TextButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-                foregroundColor: SpinelTheme.brightText,
-                backgroundColor: SpinelTheme.darkCard,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  side: const BorderSide(color: SpinelTheme.borderColor),
-                ),
-              ),
-              icon: const Icon(Icons.tune, size: 15, color: SpinelTheme.rubyBright),
-              label: Text(
-                'Metadata (${selectedNote.frontmatter.length})',
-                style: const TextStyle(fontSize: 11),
-              ),
-              onPressed: () {
-                FrontmatterDialog.show(context, selectedNote, () {
-                  setState(() {});
-                });
-              },
-            ),
-
-          const SizedBox(width: 8),
-
-          // Save Button
-          IconButton(
-            icon: const Icon(Icons.save_outlined, size: 19, color: SpinelTheme.brightText),
-            tooltip: 'Save Note (Cmd+S)',
-            onPressed: selectedNote == null
-                ? null
-                : () async {
-                    final service = ref.read(vaultServiceProvider);
-                    await service.saveNoteAtomic(selectedNote);
-                    ref.read(selectedNoteProvider.notifier).setNote(NoteDocument(
-                      filePath: selectedNote.filePath,
-                      relativePath: selectedNote.relativePath,
-                      frontmatter: selectedNote.frontmatter,
-                      body: selectedNote.body,
-                      isModified: false,
-                    ));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Note saved to disk.'),
-                        duration: Duration(seconds: 1),
-                        backgroundColor: SpinelTheme.darkCard,
-                      ),
-                    );
+              // Metadata Popup Button
+              if (selectedNote != null)
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    side: const BorderSide(color: SpinelTheme.borderColor),
+                    backgroundColor: SpinelTheme.darkCard,
+                  ),
+                  icon: const Icon(Icons.tune, size: 13, color: SpinelTheme.softText),
+                  label: Text(
+                    'Properties (${selectedNote.frontmatter.length})',
+                    style: const TextStyle(fontSize: 11, color: SpinelTheme.brightText),
+                  ),
+                  onPressed: () {
+                    FrontmatterDialog.show(context, selectedNote, () {
+                      setState(() {});
+                    });
                   },
+                ),
+
+              const SizedBox(width: 6),
+
+              // Save Button
+              IconButton(
+                icon: const Icon(Icons.save_outlined, size: 16, color: SpinelTheme.softText),
+                tooltip: 'Save Note (Cmd+S)',
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                onPressed: selectedNote == null
+                    ? null
+                    : () async {
+                        final service = ref.read(vaultServiceProvider);
+                        await service.saveNoteAtomic(selectedNote);
+                        ref.read(selectedNoteProvider.notifier).setNote(NoteDocument(
+                          filePath: selectedNote.filePath,
+                          relativePath: selectedNote.relativePath,
+                          frontmatter: selectedNote.frontmatter,
+                          body: selectedNote.body,
+                          isModified: false,
+                        ));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Note saved to disk.'),
+                            duration: Duration(seconds: 1),
+                            backgroundColor: SpinelTheme.darkCard,
+                          ),
+                        );
+                      },
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-        ],
+        ),
       ),
       body: Row(
         children: [
@@ -362,7 +381,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
                     child: Text(
                       'Select a note from the sidebar\nor create a new one to begin editing.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: SpinelTheme.slateText, fontSize: 13),
+                      style: TextStyle(color: SpinelTheme.slateText, fontSize: 12.5),
                     ),
                   )
                 : DualModeEditor(
