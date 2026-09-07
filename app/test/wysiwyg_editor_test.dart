@@ -19,7 +19,7 @@ void main() {
             body: Builder(
               builder: (context) {
                 controller = SpinelLivePreviewController(
-                  text: '# Heading 1\n**bold text** and `code span`\n- [ ] Task 1',
+                  text: '# Heading 1\n**bold text** and `code span`\n- [ ] Task 1\n[[Note Link]] #tag\n> Quote block',
                   isLivePreviewEnabled: true,
                 );
                 final span = controller.buildTextSpan(
@@ -34,6 +34,92 @@ void main() {
       );
 
       expect(find.byType(RichText), findsWidgets);
+    });
+
+    testWidgets('strictly guarantees 1:1 character mapping invariant (no cursor desync)', (tester) async {
+      final samples = [
+        '- Bold text with double asterisks\n- Italic text with single asterisks\n- Checkboxes (- [ ] or - [x])\n\n££\n# figata fgalattiva',
+        '# Title\n## Subtitle\n### H3\n- [ ] Unchecked\n- [x] Checked\n> Blockquote\n**Bold** *Italic* `Code` [[Wikilink]] #tag',
+        'Just normal text without any markdown tags.',
+        '[[Spinel Note]] with adjacent **bold** and `code` tags',
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                for (final text in samples) {
+                  final controller = SpinelLivePreviewController(
+                    text: text,
+                    isLivePreviewEnabled: true,
+                  );
+                  final span = controller.buildTextSpan(
+                    context: context,
+                    withComposing: false,
+                  );
+                  // The rendered plain text must EXACTLY equal the underlying raw text
+                  expect(span.toPlainText(), equals(text), reason: 'TextSpan character length mismatch for text:\n$text');
+                }
+                return const Text('ok');
+              },
+            ),
+          ),
+        ),
+      );
+    });
+
+    testWidgets('typing DEL/Backspace at cursor removes characters at cursor and not above/below', (tester) async {
+      // Scenario from user screenshot:
+      // Line 0: "- list item" (length 11, indices 0..10, newline at 11)
+      // Line 1: "££" (length 2, indices 12..13, newline at 14)
+      // Line 2: "# figata fgalattiva" (length 19, indices 15..33)
+      final initialText = '- list item\n££\n# figata fgalattiva';
+      final controller = SpinelLivePreviewController(
+        text: initialText,
+        isLivePreviewEnabled: true,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TextField(
+              controller: controller,
+              maxLines: null,
+            ),
+          ),
+        ),
+      );
+
+      // Focus the text field
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+
+      // Position cursor right after '££' (index 14)
+      controller.selection = const TextSelection.collapsed(offset: 14);
+      await tester.pump();
+
+      // Delete first '£' (simulate backspace / DEL at cursor position)
+      final textAfterOneDelete = controller.text.substring(0, 13) + controller.text.substring(14);
+      controller.value = TextEditingValue(
+        text: textAfterOneDelete,
+        selection: const TextSelection.collapsed(offset: 13),
+      );
+      await tester.pump();
+      expect(controller.text, equals('- list item\n£\n# figata fgalattiva'));
+
+      // Delete second '£'
+      final textAfterTwoDeletes = controller.text.substring(0, 12) + controller.text.substring(13);
+      controller.value = TextEditingValue(
+        text: textAfterTwoDeletes,
+        selection: const TextSelection.collapsed(offset: 12),
+      );
+      await tester.pump();
+
+      // Verify that the two '££' were removed, and BOTH line above and heading below are pristine
+      expect(controller.text, equals('- list item\n\n# figata fgalattiva'));
+      expect(controller.text.startsWith('- list item\n'), isTrue);
+      expect(controller.text.endsWith('\n# figata fgalattiva'), isTrue);
     });
   });
 

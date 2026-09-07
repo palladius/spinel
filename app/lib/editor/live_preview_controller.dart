@@ -19,92 +19,56 @@ class SpinelLivePreviewController extends TextEditingController {
       return super.buildTextSpan(context: context, style: style, withComposing: withComposing);
     }
 
-    final baseStyle = style ?? const TextStyle(color: SpinelTheme.brightText, fontSize: 14, height: 1.6);
+    final baseStyle = style ?? const TextStyle(color: SpinelTheme.brightText, fontSize: 13, height: 1.45);
     final spans = <InlineSpan>[];
-
-    final cursorOffset = selection.baseOffset;
     final lines = text.split('\n');
-    int currentOffset = 0;
 
     for (int i = 0; i < lines.length; i++) {
-      final line = lines[i];
-      final lineStart = currentOffset;
-      final lineEnd = lineStart + line.length;
-      final isCursorOnLine = cursorOffset >= lineStart && cursorOffset <= lineEnd;
-
-      if (isCursorOnLine) {
-        // Line being edited: Render with syntax highlighting while keeping raw tokens visible
-        spans.add(_buildActiveLineSpan(line, baseStyle));
-      } else {
-        // Line not being edited: Render rich WYSIWYG formatting
-        spans.add(_buildInactiveLineSpan(line, baseStyle));
-      }
-
+      spans.add(_buildLineSpan(lines[i], baseStyle));
       if (i < lines.length - 1) {
         spans.add(const TextSpan(text: '\n'));
       }
-
-      currentOffset += line.length + 1; // +1 for '\n'
     }
 
     return TextSpan(children: spans, style: baseStyle);
   }
 
-  InlineSpan _buildActiveLineSpan(String line, TextStyle baseStyle) {
+  InlineSpan _buildLineSpan(String line, TextStyle baseStyle) {
     if (line.startsWith('# ')) {
+      final headingStyle = baseStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold, color: SpinelTheme.brightText);
       return TextSpan(
         children: [
-          const TextSpan(text: '# ', style: TextStyle(color: SpinelTheme.rubyBright, fontWeight: FontWeight.bold)),
-          TextSpan(text: line.substring(2), style: baseStyle.copyWith(fontSize: 22, fontWeight: FontWeight.bold, color: SpinelTheme.brightText)),
+          TextSpan(text: '# ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary)),
+          _parseInlineSpans(line.substring(2), headingStyle),
         ],
       );
     } else if (line.startsWith('## ')) {
+      final headingStyle = baseStyle.copyWith(fontSize: 17, fontWeight: FontWeight.bold, color: SpinelTheme.brightText);
       return TextSpan(
         children: [
-          const TextSpan(text: '## ', style: TextStyle(color: SpinelTheme.rubyBright, fontWeight: FontWeight.bold)),
-          TextSpan(text: line.substring(3), style: baseStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold, color: SpinelTheme.brightText)),
+          TextSpan(text: '## ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary)),
+          _parseInlineSpans(line.substring(3), headingStyle),
         ],
       );
     } else if (line.startsWith('### ')) {
+      final headingStyle = baseStyle.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: SpinelTheme.brightText);
       return TextSpan(
         children: [
-          const TextSpan(text: '### ', style: TextStyle(color: SpinelTheme.rubyBright, fontWeight: FontWeight.bold)),
-          TextSpan(text: line.substring(4), style: baseStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: SpinelTheme.brightText)),
+          TextSpan(text: '### ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary)),
+          _parseInlineSpans(line.substring(4), headingStyle),
         ],
       );
-    } else if (line.startsWith('- [ ] ') || line.startsWith('- [x] ')) {
-      final isChecked = line.startsWith('- [x] ');
+    } else if (line.startsWith('- [ ] ') || line.startsWith('- [x] ') || line.startsWith('* [ ] ') || line.startsWith('* [x] ')) {
+      final isChecked = line[3] == 'x' || line[3] == 'X';
+      final prefix = line.substring(0, 6);
       return TextSpan(
         children: [
           TextSpan(
-            text: isChecked ? '☑ ' : '☐ ',
-            style: TextStyle(color: isChecked ? SpinelTheme.rubyBright : SpinelTheme.slateText, fontWeight: FontWeight.bold),
-          ),
-          TextSpan(text: line.substring(6), style: baseStyle.copyWith(decoration: isChecked ? TextDecoration.lineThrough : null)),
-        ],
-      );
-    }
-
-    return _parseInlineSpans(line, baseStyle, isActive: true);
-  }
-
-  InlineSpan _buildInactiveLineSpan(String line, TextStyle baseStyle) {
-    if (line.startsWith('# ')) {
-      return TextSpan(text: line.substring(2), style: baseStyle.copyWith(fontSize: 22, fontWeight: FontWeight.bold, color: SpinelTheme.brightText));
-    } else if (line.startsWith('## ')) {
-      return TextSpan(text: line.substring(3), style: baseStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold, color: SpinelTheme.brightText));
-    } else if (line.startsWith('### ')) {
-      return TextSpan(text: line.substring(4), style: baseStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: SpinelTheme.brightText));
-    } else if (line.startsWith('- [ ] ') || line.startsWith('- [x] ')) {
-      final isChecked = line.startsWith('- [x] ');
-      return TextSpan(
-        children: [
-          TextSpan(
-            text: isChecked ? '☑ ' : '☐ ',
-            style: TextStyle(
-              fontSize: 15,
-              color: isChecked ? SpinelTheme.rubyBright : SpinelTheme.slateText,
+            text: prefix,
+            style: baseStyle.copyWith(
+              color: isChecked ? SpinelTheme.rubyBright : SpinelTheme.slateMuted,
               fontWeight: FontWeight.bold,
+              fontFamily: 'monospace',
             ),
           ),
           _parseInlineSpans(
@@ -113,21 +77,26 @@ class SpinelLivePreviewController extends TextEditingController {
               color: isChecked ? SpinelTheme.slateText : SpinelTheme.brightText,
               decoration: isChecked ? TextDecoration.lineThrough : null,
             ),
-            isActive: false,
           ),
         ],
       );
     } else if (line.startsWith('> ')) {
       return TextSpan(
-        text: '▎ ${line.substring(2)}',
-        style: baseStyle.copyWith(fontStyle: FontStyle.italic, color: SpinelTheme.rubyLight),
+        children: [
+          TextSpan(text: '> ', style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary, fontWeight: FontWeight.bold)),
+          _parseInlineSpans(line.substring(2), baseStyle.copyWith(fontStyle: FontStyle.italic, color: SpinelTheme.rubyLight)),
+        ],
       );
     }
 
-    return _parseInlineSpans(line, baseStyle, isActive: false);
+    return _parseInlineSpans(line, baseStyle);
   }
 
-  InlineSpan _parseInlineSpans(String text, TextStyle baseStyle, {required bool isActive}) {
+  InlineSpan _parseInlineSpans(String text, TextStyle baseStyle) {
+    if (text.isEmpty) {
+      return TextSpan(text: '', style: baseStyle);
+    }
+
     // Regex for inline tokens: **bold**, *italic*, `code`, [[wikilink]], #tag
     final regex = RegExp(r'(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[\[[^\]]+\]\]|#[a-zA-Z0-9_\-]+)');
     final matches = regex.allMatches(text);
@@ -146,36 +115,56 @@ class SpinelLivePreviewController extends TextEditingController {
 
       final matchedText = match.group(0)!;
 
-      if (matchedText.startsWith('**') && matchedText.endsWith('**')) {
-        final content = matchedText.substring(2, matchedText.length - 2);
+      if (matchedText.startsWith('**') && matchedText.endsWith('**') && matchedText.length >= 4) {
         children.add(TextSpan(
-          text: isActive ? matchedText : content,
+          text: '**',
+          style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary.withOpacity(0.6), fontWeight: FontWeight.bold),
+        ));
+        children.add(TextSpan(
+          text: matchedText.substring(2, matchedText.length - 2),
           style: baseStyle.copyWith(fontWeight: FontWeight.bold, color: SpinelTheme.brightText),
         ));
-      } else if (matchedText.startsWith('*') && matchedText.endsWith('*')) {
-        final content = matchedText.substring(1, matchedText.length - 1);
         children.add(TextSpan(
-          text: isActive ? matchedText : content,
+          text: '**',
+          style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary.withOpacity(0.6), fontWeight: FontWeight.bold),
+        ));
+      } else if (matchedText.startsWith('*') && matchedText.endsWith('*') && matchedText.length >= 2) {
+        children.add(TextSpan(
+          text: '*',
+          style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary.withOpacity(0.6)),
+        ));
+        children.add(TextSpan(
+          text: matchedText.substring(1, matchedText.length - 1),
           style: baseStyle.copyWith(fontStyle: FontStyle.italic),
         ));
-      } else if (matchedText.startsWith('`') && matchedText.endsWith('`')) {
-        final content = matchedText.substring(1, matchedText.length - 1);
         children.add(TextSpan(
-          text: isActive ? matchedText : content,
+          text: '*',
+          style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary.withOpacity(0.6)),
+        ));
+      } else if (matchedText.startsWith('`') && matchedText.endsWith('`') && matchedText.length >= 2) {
+        children.add(TextSpan(
+          text: matchedText,
           style: baseStyle.copyWith(
             fontFamily: 'monospace',
             backgroundColor: SpinelTheme.darkCard,
-            color: SpinelTheme.rubyBright,
+            color: SpinelTheme.rubyLight,
           ),
         ));
-      } else if (matchedText.startsWith('[[') && matchedText.endsWith(']]')) {
-        final link = matchedText.substring(2, matchedText.length - 2);
+      } else if (matchedText.startsWith('[[') && matchedText.endsWith(']]') && matchedText.length >= 4) {
         children.add(TextSpan(
-          text: isActive ? matchedText : link,
+          text: '[[',
+          style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary.withOpacity(0.7)),
+        ));
+        children.add(TextSpan(
+          text: matchedText.substring(2, matchedText.length - 2),
           style: baseStyle.copyWith(
             color: Colors.lightBlueAccent,
             decoration: TextDecoration.underline,
           ),
+        ));
+        children.add(TextSpan(
+          text: ']]',
+          style: baseStyle.copyWith(color: SpinelTheme.rubyPrimary.withOpacity(0.7)),
         ));
       } else if (matchedText.startsWith('#')) {
         children.add(TextSpan(
