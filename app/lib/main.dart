@@ -5,10 +5,13 @@ import 'package:path/path.dart' as p;
 import 'package:app/models/note_document.dart';
 import 'package:app/services/vault_service.dart';
 import 'package:app/state/vault_provider.dart';
+import 'package:app/state/sync_provider.dart';
 import 'package:app/theme/spinel_theme.dart';
 import 'package:app/widgets/dual_mode_editor.dart';
 import 'package:app/widgets/file_tree_sidebar.dart';
 import 'package:app/widgets/frontmatter_dialog.dart';
+import 'package:app/widgets/sync_dialog.dart';
+import 'package:app/widgets/conflict_resolution_dialog.dart';
 
 void main() {
   runApp(const ProviderScope(child: SpinelApp()));
@@ -50,11 +53,14 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
 
       for (final candidate in candidates) {
         if (Directory(candidate).existsSync()) {
-          ref.read(vaultPathProvider.notifier).setPath(p.canonicalize(candidate));
+          final canon = p.canonicalize(candidate);
+          ref.read(vaultPathProvider.notifier).setPath(canon);
+          ref.read(syncProvider.notifier).loadConfigForVault(canon);
           return;
         }
       }
       ref.read(vaultPathProvider.notifier).setPath(currentDir);
+      ref.read(syncProvider.notifier).loadConfigForVault(currentDir);
     });
   }
 
@@ -108,6 +114,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
                 final targetPath = pathController.text.trim();
                 if (targetPath.isNotEmpty && Directory(targetPath).existsSync()) {
                   ref.read(vaultPathProvider.notifier).setPath(targetPath);
+                  ref.read(syncProvider.notifier).loadConfigForVault(targetPath);
                   ref.read(selectedNoteProvider.notifier).setNote(null);
                   ref.invalidate(vaultNodesProvider);
                 }
@@ -237,6 +244,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
     final selectedNote = ref.watch(selectedNoteProvider);
     final editorMode = ref.watch(editorModeProvider);
     final vaultPath = ref.watch(vaultPathProvider);
+    final syncState = ref.watch(syncProvider);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -336,6 +344,11 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
 
               const SizedBox(width: 6),
 
+              // Cloud Sync Action Button
+              _buildSyncButton(context, ref, syncState, vaultPath),
+
+              const SizedBox(width: 6),
+
               // Save Button
               IconButton(
                 icon: const Icon(Icons.save_outlined, size: 16, color: SpinelTheme.softText),
@@ -395,6 +408,66 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSyncButton(BuildContext context, WidgetRef ref, SyncState syncState, String? vaultPath) {
+    Widget iconWidget;
+    String tooltip;
+
+    switch (syncState.status) {
+      case SyncStatus.syncing:
+        iconWidget = const SizedBox(
+          width: 14,
+          height: 14,
+          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.lightBlueAccent),
+        );
+        tooltip = 'Syncing with cloud...';
+        break;
+      case SyncStatus.conflict:
+        iconWidget = Stack(
+          alignment: Alignment.topRight,
+          children: [
+            const Icon(Icons.cloud_sync, size: 16, color: Colors.amberAccent),
+            Container(
+              padding: const EdgeInsets.all(1.5),
+              decoration: const BoxDecoration(color: Colors.amberAccent, shape: BoxShape.circle),
+              child: Text(
+                '${syncState.conflicts.length}',
+                style: const TextStyle(fontSize: 8, color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+        tooltip = 'Sync Conflict Detected - Click to Resolve';
+        break;
+      case SyncStatus.synced:
+        iconWidget = const Icon(Icons.cloud_done, size: 16, color: Colors.greenAccent);
+        tooltip = 'Synced: ${syncState.lastSyncedAt ?? "Recently"}';
+        break;
+      case SyncStatus.error:
+        iconWidget = const Icon(Icons.cloud_off, size: 16, color: Colors.redAccent);
+        tooltip = 'Sync Error: ${syncState.errorMessage ?? "Failed"}';
+        break;
+      case SyncStatus.idle:
+        iconWidget = const Icon(Icons.cloud_outlined, size: 16, color: SpinelTheme.softText);
+        tooltip = 'Cloud Sync Settings';
+        break;
+    }
+
+    return IconButton(
+      icon: iconWidget,
+      tooltip: tooltip,
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+      onPressed: () {
+        if (syncState.status == SyncStatus.conflict && syncState.conflicts.isNotEmpty) {
+          ConflictResolutionDialog.show(context, syncState.conflicts.first);
+        } else {
+          SyncDialog.show(context);
+        }
+      },
     );
   }
 }

@@ -90,6 +90,8 @@ class NoteDocument {
     );
   }
 
+  String get rawContent => toRawContent();
+
   String toRawContent() {
     if (frontmatter.isEmpty) {
       return body;
