@@ -64,27 +64,24 @@ class _DualModeEditorState extends ConsumerState<DualModeEditor> {
     }
 
     final selection = _controller.selection;
-    if (!selection.isValid || selection.baseOffset < 0) {
-      _hideOverlays();
-      return;
+    bool shouldShowSlash = false;
+    bool shouldShowWikilink = false;
+
+    if (selection.isValid && selection.baseOffset >= 0) {
+      final offset = selection.baseOffset;
+      final textBeforeCaret = newText.substring(0, offset);
+
+      if (textBeforeCaret.endsWith('/') && (textBeforeCaret.length == 1 || textBeforeCaret[textBeforeCaret.length - 2] == '\n' || textBeforeCaret[textBeforeCaret.length - 2] == ' ')) {
+        shouldShowSlash = true;
+      } else if (textBeforeCaret.endsWith('[[')) {
+        shouldShowWikilink = true;
+      }
     }
 
-    final offset = selection.baseOffset;
-    final textBeforeCaret = newText.substring(0, offset);
-
-    if (textBeforeCaret.endsWith('/') && (textBeforeCaret.length == 1 || textBeforeCaret[textBeforeCaret.length - 2] == '\n' || textBeforeCaret[textBeforeCaret.length - 2] == ' ')) {
-      setState(() {
-        _showSlashMenu = true;
-        _showWikilinkMenu = false;
-      });
-    } else if (textBeforeCaret.endsWith('[[')) {
-      setState(() {
-        _showWikilinkMenu = true;
-        _showSlashMenu = false;
-      });
-    } else if (!textBeforeCaret.contains('/') && !textBeforeCaret.contains('[[')) {
-      _hideOverlays();
-    }
+    setState(() {
+      _showSlashMenu = shouldShowSlash;
+      _showWikilinkMenu = shouldShowWikilink;
+    });
   }
 
   void _hideOverlays() {

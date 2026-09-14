@@ -121,6 +121,66 @@ void main() {
       expect(controller.text.startsWith('- list item\n'), isTrue);
       expect(controller.text.endsWith('\n# figata fgalattiva'), isTrue);
     });
+
+    testWidgets('cursor positioned exactly between "pinco" and "pallo" injects "sempronio " without shifting lines', (tester) async {
+      // Multiline structure with headers above and below
+      // Line 0: "# Header Superiore" (length 18, newline at 18)
+      // Line 1: "pinco pallo" (length 11, newline at 30)
+      // Line 2: "## Header Inferiore" (length 19)
+      const line0 = '# Header Superiore\n';
+      const line1 = 'pinco pallo\n';
+      const line2 = '## Header Inferiore';
+      final initialDoc = '$line0$line1$line2';
+
+      final controller = SpinelLivePreviewController(
+        text: initialDoc,
+        isLivePreviewEnabled: true,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TextField(
+              controller: controller,
+              maxLines: null,
+            ),
+          ),
+        ),
+      );
+
+      // Focus the text field
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+
+      // Locate cursor between 'pinco ' and 'pallo'
+      // Offset = length of line0 (19) + length of 'pinco ' (6) = 25
+      final cursorOffset = line0.length + 'pinco '.length;
+      expect(initialDoc.substring(cursorOffset, cursorOffset + 5), equals('pallo'));
+
+      controller.selection = TextSelection.collapsed(offset: cursorOffset);
+      await tester.pump();
+
+      // Inject "sempronio " at the exact cursor position
+      const wordToInject = 'sempronio ';
+      final updatedText = controller.text.substring(0, cursorOffset) +
+          wordToInject +
+          controller.text.substring(cursorOffset);
+
+      controller.value = TextEditingValue(
+        text: updatedText,
+        selection: TextSelection.collapsed(offset: cursorOffset + wordToInject.length),
+      );
+      await tester.pump();
+
+      // Verify exact result:
+      // Line 0: "# Header Superiore" is untouched
+      // Line 1: "pinco sempronio pallo"
+      // Line 2: "## Header Inferiore" is untouched
+      expect(controller.text, equals('# Header Superiore\npinco sempronio pallo\n## Header Inferiore'));
+      expect(controller.text.startsWith('# Header Superiore\n'), isTrue);
+      expect(controller.text.endsWith('\n## Header Inferiore'), isTrue);
+      expect(controller.text.contains('pinco sempronio pallo'), isTrue);
+    });
   });
 
   group('SlashCommandMenu Widget', () {

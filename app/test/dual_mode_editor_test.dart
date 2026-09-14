@@ -40,4 +40,47 @@ void main() {
     // Verify raw text field contains markdown text
     expect(find.byType(TextField), findsOneWidget);
   });
+
+  testWidgets('editing markdown on the left instantly updates rendered preview on the right', (WidgetTester tester) async {
+    String currentBody = 'pinco pallo';
+    final doc = NoteDocument(
+      filePath: '/tmp/note.md',
+      relativePath: 'note.md',
+      frontmatter: {},
+      body: currentBody,
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          theme: SpinelTheme.darkTheme,
+          home: Scaffold(
+            body: DualModeEditor(
+              document: doc,
+              mode: EditorViewMode.splitView,
+              onBodyChanged: (newBody) {
+                currentBody = newBody;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify initial text appears in preview
+    expect(find.text('pinco pallo'), findsWidgets);
+
+    // Edit text field on the left by typing "pinco sempronio pallo"
+    await tester.enterText(find.byType(TextField), '# Heading\npinco sempronio pallo');
+    await tester.pump();
+
+    // Verify callback was triggered
+    expect(currentBody, equals('# Heading\npinco sempronio pallo'));
+
+    // Verify the preview on the right immediately re-rendered with new text
+    expect(find.text('pinco sempronio pallo'), findsOneWidget);
+    expect(find.text('Heading'), findsOneWidget);
+  });
 }

@@ -35,26 +35,26 @@ class SpinelLivePreviewController extends TextEditingController {
 
   InlineSpan _buildLineSpan(String line, TextStyle baseStyle) {
     if (line.startsWith('# ')) {
-      final headingStyle = baseStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold, color: SpinelTheme.brightText);
+      final headingStyle = baseStyle.copyWith(fontWeight: FontWeight.bold, color: SpinelTheme.brightText);
       return TextSpan(
         children: [
-          TextSpan(text: '# ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary)),
+          TextSpan(text: '# ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary, fontWeight: FontWeight.bold)),
           _parseInlineSpans(line.substring(2), headingStyle),
         ],
       );
     } else if (line.startsWith('## ')) {
-      final headingStyle = baseStyle.copyWith(fontSize: 17, fontWeight: FontWeight.bold, color: SpinelTheme.brightText);
+      final headingStyle = baseStyle.copyWith(fontWeight: FontWeight.bold, color: SpinelTheme.brightText);
       return TextSpan(
         children: [
-          TextSpan(text: '## ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary)),
+          TextSpan(text: '## ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary, fontWeight: FontWeight.bold)),
           _parseInlineSpans(line.substring(3), headingStyle),
         ],
       );
     } else if (line.startsWith('### ')) {
-      final headingStyle = baseStyle.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: SpinelTheme.brightText);
+      final headingStyle = baseStyle.copyWith(fontWeight: FontWeight.w600, color: SpinelTheme.brightText);
       return TextSpan(
         children: [
-          TextSpan(text: '### ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary)),
+          TextSpan(text: '### ', style: headingStyle.copyWith(color: SpinelTheme.rubyPrimary, fontWeight: FontWeight.bold)),
           _parseInlineSpans(line.substring(4), headingStyle),
         ],
       );
