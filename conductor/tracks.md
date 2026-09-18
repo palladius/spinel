@@ -9,3 +9,6 @@
 ---
 - [x] **Track: Two-Way WYSIWYG Editor Canvas & Live Preview**
   *Link: [./tracks/wysiwyg_editor_20260907/index.md](./tracks/wysiwyg_editor_20260907/index.md)*
+---
+- [x] **Track: Spinel Landing Page for GitHub Pages**
+  *Link: [./tracks/landing_page_20260918/index.md](./tracks/landing_page_20260918/index.md)*

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spinel (spinel.md) — Fast, Local-First, Zero-Knowledge Markdown Knowledge Base</title>
+  <meta name="description" content="A high-performance, privacy-first, cross-platform Markdown knowledge base and Obsidian alternative. Desktop, Mobile, Go CLI, and Serverless Rails 8 sync." />
+  <link rel="icon" type="image/png" href="assets/spinel_icon.png" />
+
+  <!-- Tailwind CSS CDN with custom Ruby/Obsidian theme extensions -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: {
+              950: '#060608',
+              900: '#0a0a0d',
+              850: '#0f1015',
+              800: '#14151c',
+              700: '#1e2029',
+              600: '#2b2e3b',
+            },
+            spinel: {
+              flame: '#ff2a55',
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              200: '#fecdd3',
+              300: '#fda4af',
+              400: '#fb7185',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              800: '#9f1239',
+              900: '#881337',
+              950: '#4c0519',
+              ruby: '#9b111e',
+              darkruby: '#4a0404',
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          boxShadow: {
+            'glow-ruby': '0 0 50px -10px rgba(225, 29, 72, 0.35)',
+            'glow-ruby-lg': '0 0 100px -20px rgba(225, 29, 72, 0.45)',
+            'glow-ruby-card': '0 10px 30px -10px rgba(155, 17, 30, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+    .animate-pulse-glow {
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+    .mac-traffic-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 9999px;
+      display: inline-block;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b2e3b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e11d48;
+    }
+  </style>
+</head>
+<body class="bg-obsidian-950 text-slate-100 font-sans antialiased selection:bg-spinel-600 selection:text-white min-h-screen relative overflow-x-hidden">
+
+  <!-- Ambient Ruby Glow Orbs in Background -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-spinel-600/15 blur-[140px] rounded-full animate-pulse-glow"></div>
+    <div class="absolute top-[35%] -left-48 w-[500px] h-[500px] bg-spinel-900/20 blur-[130px] rounded-full"></div>
+    <div class="absolute top-[60%] -right-48 w-[500px] h-[500px] bg-spinel-800/15 blur-[140px] rounded-full"></div>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-obsidian-950/80 border-b border-obsidian-800/80 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo & Brand Title -->
+      <a href="#" class="flex items-center space-x-3 group">
+        <div class="relative">
+          <div class="absolute -inset-1 bg-gradient-to-r from-spinel-600 to-spinel-flame rounded-xl blur opacity-60 group-hover:opacity-100 transition duration-300"></div>
+          <img src="assets/spinel_icon.png" alt="Spinel Logo" class="relative w-9 h-9 rounded-lg object-contain shadow-md" />
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent group-hover:text-white transition">Spinel</span>
+          <span class="text-xs font-mono text-spinel-400 font-semibold px-1.5 py-0.5 rounded bg-spinel-950/80 border border-spinel-800/50">spinel.md</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+        <a href="#preview" class="hover:text-spinel-400 transition">App Showcase</a>
+        <a href="#interactive" class="hover:text-spinel-400 transition">Live Demo</a>
+        <a href="#architecture" class="hover:text-spinel-400 transition">Architecture</a>
+        <a href="#cli" class="hover:text-spinel-400 transition">Go CLI</a>
+        <a href="#gallery" class="hover:text-spinel-400 transition">Branding</a>
+      </nav>
+
+      <!-- Action Buttons & GitHub Stats -->
+      <div class="flex items-center space-x-3">
+        <a href="https://github.com/palladius/spinel" target="_blank" rel="noopener noreferrer" 
+           class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-obsidian-850 hover:bg-obsidian-800 text-slate-200 border border-obsidian-700/80 hover:border-spinel-600/60 shadow-sm transition">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+          <span class="bg-obsidian-700 text-[10px] text-slate-300 font-mono px-1.5 py-0.5 rounded">v0.5.0</span>
+        </a>
+
+        <a href="#quickstart" class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-spinel-600 to-spinel-700 hover:from-spinel-500 hover:to-spinel-600 text-white shadow-glow-ruby transition">
+          Quickstart
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-20 pb-16 lg:pt-28 lg:pb-24 z-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      
+      <!-- Top Pill Release Badge -->
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-spinel-950/70 border border-spinel-700/60 shadow-inner mb-8">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-spinel-flame opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-spinel-500"></span>
+        </span>
+        <span class="text-xs font-medium text-spinel-300 tracking-wide">Obsidian alternative for engineers & SREs</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight mb-6">
+        The Fast, Local-First, <br />
+        <span class="bg-gradient-to-r from-rose-400 via-spinel-500 to-spinel-flame bg-clip-text text-transparent">
+          Zero-Knowledge Markdown
+        </span> <br />
+        Knowledge Base.
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="max-w-3xl mx-auto text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed font-light">
+        Operates directly on standard <code class="text-spinel-400 font-mono bg-obsidian-850 px-2 py-0.5 rounded border border-obsidian-700">.md</code> files on your filesystem with client-side <span class="text-white font-medium">AES-256-GCM</span> encryption. 
+        Enjoy an Obsidian-grade dual-mode editor, blazing-fast standalone Go CLI, and serverless Cloud Run synchronization.
+      </p>
+
+      <!-- Primary Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <a href="#interactive" class="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-spinel-600 via-spinel-500 to-spinel-600 hover:brightness-110 text-white shadow-glow-ruby-lg transition transform hover:-translate-y-0.5">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Try Interactive Live Demo
+        </a>
+
+        <a href="https://github.com/palladius/spinel" target="_blank" rel="noopener noreferrer" 
+           class="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 rounded-xl font-semibold text-sm bg-obsidian-850 hover:bg-obsidian-800 text-slate-200 border border-obsidian-700 hover:border-spinel-500/50 shadow-sm transition transform hover:-translate-y-0.5">
+          <svg class="w-4 h-4 mr-2 fill-current" viewBox="0 0 24 24">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- Feature Pill Badges -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-mono text-slate-400">
+        <span class="px-3 py-1 rounded-full bg-obsidian-900 border border-obsidian-800 flex items-center">
+          <span class="text-spinel-400 mr-1.5 font-bold">✓</span> Local .md Direct Filesystem
+        </span>
+        <span class="px-3 py-1 rounded-full bg-obsidian-900 border border-obsidian-800 flex items-center">
+          <span class="text-spinel-400 mr-1.5 font-bold">✓</span> AES-256-GCM Zero-Knowledge
+        </span>
+        <span class="px-3 py-1 rounded-full bg-obsidian-900 border border-obsidian-800 flex items-center">
+          <span class="text-spinel-400 mr-1.5 font-bold">✓</span> Standalone Go CLI
+        </span>
+        <span class="px-3 py-1 rounded-full bg-obsidian-900 border border-obsidian-800 flex items-center">
+          <span class="text-spinel-400 mr-1.5 font-bold">✓</span> Flutter Desktop & Mobile
+        </span>
+        <span class="px-3 py-1 rounded-full bg-obsidian-900 border border-obsidian-800 flex items-center">
+          <span class="text-spinel-400 mr-1.5 font-bold">✓</span> Rails 8 Cloud Run Backend
+        </span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2: macOS App Mockup with Interactive Tab Switcher -->
+  <section id="preview" class="py-16 relative z-10 border-t border-obsidian-800/80 bg-obsidian-900/40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-xs font-mono font-semibold uppercase tracking-widest text-spinel-400 mb-2">Desktop Client Preview</h2>
+        <h3 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">The Native Spinel Experience</h3>
+        <p class="text-slate-400 text-sm sm:text-base mt-3">An Obsidian-class user interface built with Flutter Desktop. Dense, responsive, and tuned for keyboard speed.</p>
+      </div>
+
+      <!-- macOS Window Mockup Container -->
+      <div class="rounded-2xl bg-obsidian-950 border border-obsidian-700/80 shadow-2xl overflow-hidden shadow-glow-ruby-card">
+        
+        <!-- macOS Window Titlebar & Tab Bar -->
+        <div class="bg-obsidian-900 px-4 py-3 border-b border-obsidian-800 flex flex-wrap items-center justify-between gap-4 select-none">
+          
+          <!-- Traffic Lights -->
+          <div class="flex items-center space-x-2">
+            <span class="mac-traffic-light bg-[#ff5f56] border border-[#e0443e]"></span>
+            <span class="mac-traffic-light bg-[#ffbd2e] border border-[#dea123]"></span>
+            <span class="mac-traffic-light bg-[#27c93f] border border-[#1aab29]"></span>
+            <span class="ml-3 text-xs font-mono text-slate-400 hidden sm:inline">Spinel — ~/my-vault/Daily/2026-09-18.md</span>
+          </div>
+
+          <!-- Interactive Tab Switcher -->
+          <div class="flex items-center bg-obsidian-850 p-1 rounded-lg border border-obsidian-700/80 text-xs font-medium" id="tabBar">
+            <button onclick="switchTab('editor')" id="tab-btn-editor" class="px-3 py-1.5 rounded-md bg-spinel-600 text-white font-semibold transition shadow-sm">
+              ✨ Live Preview
+            </button>
+            <button onclick="switchTab('raw')" id="tab-btn-raw" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition">
+              📝 Raw Markdown
+            </button>
+            <button onclick="switchTab('sync')" id="tab-btn-sync" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition">
+              🔄 Cloud Sync & Diff
+            </button>
+            <button onclick="switchTab('vault')" id="tab-btn-vault" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition">
+              🗂️ Ultra-Dense Vault
+            </button>
+          </div>
+        </div>
+
+        <!-- Window Body Views -->
+        <div class="relative min-h-[480px] bg-obsidian-950 p-6 font-mono text-sm">
+          
+          <!-- Tab 1: Live Preview Mode -->
+          <div id="view-editor" class="tab-view block space-y-4">
+            <div class="flex items-center justify-between border-b border-obsidian-800 pb-3 font-sans">
+              <div class="flex items-center space-x-3">
+                <span class="text-xs px-2 py-0.5 rounded bg-spinel-950 text-spinel-400 font-mono border border-spinel-900">Frontmatter Verified</span>
+                <span class="text-xs text-slate-400">Word count: 342 · Read time: 2 min</span>
+              </div>
+              <div class="flex items-center space-x-2 text-xs text-slate-400">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Saved locally</span>
+              </div>
+            </div>
+
+            <!-- Frontmatter card -->
+            <div class="bg-obsidian-900/80 rounded-xl p-4 border border-obsidian-800 font-mono text-xs text-slate-300 space-y-1">
+              <div class="text-spinel-400 font-bold">---</div>
+              <div><span class="text-slate-400">title:</span> "Spinel Architecture Design"</div>
+              <div><span class="text-slate-400">date:</span> 2026-09-18</div>
+              <div><span class="text-slate-400">tags:</span> [<span class="text-spinel-300">#architecture</span>, <span class="text-spinel-300">#sre</span>, <span class="text-spinel-300">#security</span>]</div>
+              <div><span class="text-slate-400">encrypted:</span> <span class="text-emerald-400">true (AES-256-GCM)</span></div>
+              <div class="text-spinel-400 font-bold">---</div>
+            </div>
+
+            <div class="font-sans space-y-4 pt-2">
+              <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center">
+                <span class="text-spinel-500 mr-2">#</span> Spinel Architectural Decisions
+              </h1>
+              <p class="text-slate-300 leading-relaxed">
+                Spinel treats local markdown files as the <strong class="text-white">uncontested single source of truth</strong>. 
+                Refer to <a href="#" class="text-spinel-400 underline decoration-spinel-500/50 hover:text-spinel-300">[[01-Crypto-Argon2id-Specification]]</a> for key derivation details.
+              </p>
+
+              <!-- Callout Box -->
+              <div class="p-4 rounded-xl bg-spinel-950/50 border-l-4 border-spinel-500 border-y border-r border-obsidian-800 text-slate-200 text-sm">
+                <div class="flex items-center text-spinel-400 font-semibold mb-1 font-mono text-xs">
+                  <span>💡 NOTE: ZERO-KNOWLEDGE PRINCIPLE</span>
+                </div>
+                The Cloud Run backend only stores encrypted blobs and indexing hashes. No plaintext leaves your machine.
+              </div>
+
+              <!-- Interactive Checklist in Mockup -->
+              <div class="space-y-2 pt-2 text-slate-200">
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" checked disabled class="w-4 h-4 rounded text-spinel-600 bg-obsidian-800 border-obsidian-700 accent-spinel-600" />
+                  <span class="line-through text-slate-400">Implement AST-level syntax token parser</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" checked disabled class="w-4 h-4 rounded text-spinel-600 bg-obsidian-800 border-obsidian-700 accent-spinel-600" />
+                  <span class="line-through text-slate-400">Add client-side AES-256-GCM encrypted payload streaming</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" class="w-4 h-4 rounded text-spinel-600 bg-obsidian-800 border-obsidian-700 accent-spinel-600" />
+                  <span class="text-white font-medium">Ship GitHub Pages showcase with dark ruby aesthetic</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Raw Markdown Mode -->
+          <div id="view-raw" class="tab-view hidden space-y-2 text-xs sm:text-sm font-mono leading-relaxed text-slate-300">
+            <p class="text-slate-500">// Direct 1:1 view of ~/my-vault/Daily/2026-09-18.md</p>
+            <p><span class="text-spinel-400 font-bold">---</span></p>
+            <p><span class="text-rose-300">title:</span> "Spinel Architecture Design"</p>
+            <p><span class="text-rose-300">date:</span> 2026-09-18</p>
+            <p><span class="text-rose-300">tags:</span> [#architecture, #sre, #security]</p>
+            <p><span class="text-rose-300">encrypted:</span> true</p>
+            <p><span class="text-spinel-400 font-bold">---</span></p>
+            <p class="pt-2"><span class="text-spinel-400 font-bold"># Spinel Architectural Decisions</span></p>
+            <p>Spinel treats local markdown files as the **uncontested single source of truth**.</p>
+            <p>Refer to [[01-Crypto-Argon2id-Specification]] for key derivation details.</p>
+            <p class="pt-2"><span class="text-spinel-400">> [!NOTE]</span></p>
+            <p><span class="text-slate-400">> The Cloud Run backend only stores encrypted blobs and indexing hashes.</span></p>
+            <p class="pt-2"><span class="text-spinel-400">- [x]</span> Implement AST-level syntax token parser</p>
+            <p><span class="text-spinel-400">- [x]</span> Add client-side AES-256-GCM encrypted payload streaming</p>
+            <p><span class="text-spinel-400">- [ ]</span> Ship GitHub Pages showcase with dark ruby aesthetic</p>
+          </div>
+
+          <!-- Tab 3: Cloud Sync & Conflict Resolver -->
+          <div id="view-sync" class="tab-view hidden space-y-4 font-sans">
+            <div class="flex items-center justify-between p-3 rounded-lg bg-spinel-950/60 border border-spinel-800/80">
+              <div class="flex items-center space-x-3">
+                <span class="p-2 rounded bg-spinel-900 text-spinel-300">⚠️</span>
+                <div>
+                  <h4 class="text-sm font-bold text-white">Conflict Detected during Delta Sync</h4>
+                  <p class="text-xs text-slate-300">File <code class="text-spinel-400 font-mono">Sprint-Retro.md</code> was modified on Linux Desktop and iOS simultaneously.</p>
+                </div>
+              </div>
+              <span class="text-xs font-mono bg-obsidian-800 px-2.5 py-1 rounded text-slate-300 border border-obsidian-700">Conflict ID: #c8812</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+              <div class="p-4 rounded-xl bg-obsidian-900 border border-obsidian-700">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-obsidian-800 font-bold text-emerald-400">
+                  <span>LOCAL VERSION (macOS)</span>
+                  <span class="text-[10px] text-slate-400">15:10:02</span>
+                </div>
+                <div class="space-y-1 text-slate-300">
+                  <div class="bg-emerald-950/30 text-emerald-300 p-1 rounded">+ - [x] Optimize Cloud Run cold starts to <400ms</div>
+                  <div>- - [ ] Benchmark PostgreSQL 16 JSONB queries</div>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-obsidian-900 border border-obsidian-700">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-obsidian-800 font-bold text-spinel-400">
+                  <span>REMOTE VERSION (Cloud SQL)</span>
+                  <span class="text-[10px] text-slate-400">15:09:44</span>
+                </div>
+                <div class="space-y-1 text-slate-300">
+                  <div class="bg-spinel-950/30 text-spinel-300 p-1 rounded">+ - [x] Setup pgvector for semantic note embeddings</div>
+                  <div>- - [ ] Benchmark PostgreSQL 16 JSONB queries</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-2">
+              <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-obsidian-800 hover:bg-obsidian-700 text-slate-200 border border-obsidian-700">Keep Local</button>
+              <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-obsidian-800 hover:bg-obsidian-700 text-slate-200 border border-obsidian-700">Accept Remote</button>
+              <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-spinel-600 hover:bg-spinel-500 text-white shadow-sm">Merge & Keep Both</button>
+            </div>
+          </div>
+
+          <!-- Tab 4: Ultra-Dense Vault Tree -->
+          <div id="view-vault" class="tab-view hidden space-y-3 font-mono text-xs text-slate-300">
+            <div class="text-slate-400 pb-2 border-b border-obsidian-800 flex items-center justify-between font-sans">
+              <span>Vault Root: <code class="text-spinel-400 font-mono">~/knowledge-base/</code> (1,428 notes)</span>
+              <span class="text-xs text-slate-400 font-mono">21px density</span>
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex items-center space-x-2 text-amber-400 font-semibold cursor-pointer">
+                <span>📁 00-Daily-Notes/</span>
+                <span class="text-[10px] text-slate-500 bg-obsidian-800 px-1.5 rounded">365 notes</span>
+              </div>
+              <div class="pl-4 flex items-center space-x-2 text-slate-300 hover:text-white">
+                <span>📄 2026-09-18.md</span>
+                <span class="text-[10px] text-emerald-400 font-bold">[AES]</span>
+              </div>
+              <div class="pl-4 flex items-center space-x-2 text-slate-300 hover:text-white">
+                <span>📄 2026-09-17.md</span>
+                <span class="text-[10px] text-emerald-400 font-bold">[AES]</span>
+              </div>
+
+              <div class="flex items-center space-x-2 text-sky-400 font-semibold cursor-pointer pt-1">
+                <span>📁 10-Projects/</span>
+                <span class="text-[10px] text-slate-500 bg-obsidian-800 px-1.5 rounded">42 projects</span>
+              </div>
+              <div class="pl-4 flex items-center space-x-2 text-slate-300 hover:text-white">
+                <span>📄 Spinel-Obsidian-Alternative.md</span>
+                <span class="text-[10px] text-spinel-400 font-bold">#active</span>
+              </div>
+              <div class="pl-4 flex items-center space-x-2 text-slate-300 hover:text-white">
+                <span>📄 SRE-Postmortem-Automation.md</span>
+              </div>
+
+              <div class="flex items-center space-x-2 text-emerald-400 font-semibold cursor-pointer pt-1">
+                <span>📁 20-Resources/</span>
+              </div>
+              <div class="flex items-center space-x-2 text-slate-500 font-semibold cursor-pointer pt-1">
+                <span>📁 99-Archive/</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Interactive Side-by-Side Dual-Mode Showcase ("Tu che scrivi a sx e vedi il risultato a dx") -->
+  <section id="interactive" class="py-20 relative z-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-spinel-950 border border-spinel-800 text-xs font-mono text-spinel-400 mb-3">
+          <span>⚡ Real-Time Synchronized Engine</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Write on the Left. Watch it Live on the Right.</h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-3">Watch the automated typewriter type a real Spinel note, or click the pause button to write your own markdown interactively!</p>
+      </div>
+
+      <!-- Controls & Toggle Bar -->
+      <div class="flex items-center justify-between mb-4 bg-obsidian-900 px-4 py-2.5 rounded-xl border border-obsidian-800 text-xs">
+        <div class="flex items-center space-x-3">
+          <button id="toggleAnimationBtn" onclick="toggleAutoType()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-spinel-600 hover:bg-spinel-500 text-white font-semibold transition">
+            <span id="typewriterStatusIcon">⏸️</span>
+            <span id="typewriterStatusText">Pause Animation</span>
+          </button>
+          <button onclick="restartTypewriter()" class="px-3 py-1.5 rounded-md bg-obsidian-800 hover:bg-obsidian-700 text-slate-300 font-medium transition">
+            🔄 Restart Demo
+          </button>
+        </div>
+        <div class="flex items-center space-x-2 text-slate-400 font-mono hidden sm:flex">
+          <span class="w-2 h-2 rounded-full bg-spinel-500 animate-pulse"></span>
+          <span>Live Two-Way Parser Sync</span>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Two-Column Canvas -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        
+        <!-- Left Pane: The Raw Editor with Typewriter -->
+        <div class="rounded-xl bg-obsidian-950 border border-obsidian-800 shadow-xl overflow-hidden">
+          <div class="bg-obsidian-900 px-4 py-2.5 border-b border-obsidian-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="mac-traffic-light bg-[#ff5f56]"></span>
+              <span class="mac-traffic-light bg-[#ffbd2e]"></span>
+              <span class="mac-traffic-light bg-[#27c93f]"></span>
+              <span class="text-xs font-mono text-slate-400 ml-2 font-semibold">raw_editor.md</span>
+            </div>
+            <span class="text-[11px] font-mono text-spinel-400 bg-spinel-950 px-2 py-0.5 rounded border border-spinel-900">Interactive Input</span>
+          </div>
+
+          <div class="p-4 relative min-h-[380px] bg-obsidian-950">
+            <textarea id="markdownInput" 
+                      class="w-full h-80 bg-transparent text-slate-200 font-mono text-xs sm:text-sm leading-relaxed outline-none resize-none placeholder-slate-600" 
+                      placeholder="Type your markdown here..."></textarea>
+            
+            <div class="text-[11px] text-slate-500 font-mono pt-2 border-t border-obsidian-900 flex justify-between">
+              <span>Lines: <span id="editorLines">12</span></span>
+              <span>Encoding: UTF-8 (Plaintext)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Pane: The Live Render Result -->
+        <div class="rounded-xl bg-obsidian-950 border border-obsidian-800 shadow-xl overflow-hidden shadow-glow-ruby">
+          <div class="bg-obsidian-900 px-4 py-2.5 border-b border-obsidian-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-spinel-500"></span>
+              <span class="text-xs font-mono text-slate-200 font-semibold">live_preview_render</span>
+            </div>
+            <span class="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-900">WYSIWYG Mode</span>
+          </div>
+
+          <div id="liveRenderOutput" class="p-5 min-h-[380px] bg-obsidian-950 font-sans text-sm text-slate-200 space-y-3 overflow-y-auto max-h-96">
+            <!-- Dynamic Rendered Content will appear here -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: Architecture & 4 Core Pillars -->
+  <section id="architecture" class="py-20 relative z-10 border-t border-obsidian-800 bg-obsidian-900/30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-mono font-semibold uppercase tracking-widest text-spinel-400 mb-2">Architectural Blueprint</h2>
+        <h3 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Engineered for Extreme Speed & Total Privacy</h3>
+        <p class="text-slate-400 text-sm sm:text-base mt-3">Spinel unifies cross-platform client agility with serverless cloud durability.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Pillar 1: Flutter Client -->
+        <div class="p-6 rounded-2xl bg-obsidian-950 border border-obsidian-800 hover:border-spinel-600/60 transition duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-spinel-950 border border-spinel-800/80 flex items-center justify-center text-spinel-400 mb-5 group-hover:scale-110 transition duration-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">1. Flutter Desktop & Mobile</h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Cross-platform UI running on macOS, Linux, iOS & Android with native 120Hz smooth rendering, SQLite local caching, and custom dual-mode Markdown controller.
+            </p>
+          </div>
+          <div class="text-[11px] font-mono text-spinel-400">Flutter 3.x · Drift SQLite</div>
+        </div>
+
+        <!-- Pillar 2: Go CLI -->
+        <div class="p-6 rounded-2xl bg-obsidian-950 border border-obsidian-800 hover:border-spinel-600/60 transition duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-spinel-950 border border-spinel-800/80 flex items-center justify-center text-spinel-400 mb-5 group-hover:scale-110 transition duration-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">2. Standalone Go CLI</h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Zero-dependency single binary (`spinel`). Search 50,000+ notes in milliseconds, inspect frontmatter filters, and export vaults via tar.gz straight from terminal.
+            </p>
+          </div>
+          <div class="text-[11px] font-mono text-spinel-400">Go 1.22+ · Cobra & Bubbletea</div>
+        </div>
+
+        <!-- Pillar 3: Zero-Knowledge Crypto -->
+        <div class="p-6 rounded-2xl bg-obsidian-950 border border-obsidian-800 hover:border-spinel-600/60 transition duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-spinel-950 border border-spinel-800/80 flex items-center justify-center text-spinel-400 mb-5 group-hover:scale-110 transition duration-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">3. Zero-Knowledge Cryptography</h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Military-grade AES-256-GCM encryption with Argon2id passphrase derivation. Your data is encrypted locally before ever reaching cloud mirrors or S3/GCS buckets.
+            </p>
+          </div>
+          <div class="text-[11px] font-mono text-spinel-400">Argon2id · AES-256-GCM</div>
+        </div>
+
+        <!-- Pillar 4: Rails 8 Cloud Sync -->
+        <div class="p-6 rounded-2xl bg-obsidian-950 border border-obsidian-800 hover:border-spinel-600/60 transition duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-spinel-950 border border-spinel-800/80 flex items-center justify-center text-spinel-400 mb-5 group-hover:scale-110 transition duration-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/>
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">4. Serverless Cloud Run & SQL</h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Lightweight Ruby 3.3+ backend deployed serverless on GCP Cloud Run. Cloud SQL PostgreSQL 16 with JSONB indexing and automated daily snapshots.
+            </p>
+          </div>
+          <div class="text-[11px] font-mono text-spinel-400">Rails 8 · Cloud SQL JSONB</div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 5: Branding & Official Logo Gallery -->
+  <section id="gallery" class="py-20 relative z-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="text-xs font-mono font-semibold uppercase tracking-widest text-spinel-400 mb-2">Visual Identity & Branding</h2>
+        <h3 class="text-3xl font-extrabold text-white tracking-tight">The Spinel Gemstone & Obsidian Palette</h3>
+        <p class="text-slate-400 text-sm mt-3">Crafted around rich deep ruby facets, fiery crimson edges, and obsidian dark glass.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Official Logo -->
+        <div class="p-5 rounded-2xl bg-obsidian-900 border border-spinel-700/60 shadow-glow-ruby flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-2xl overflow-hidden mb-4 p-2 bg-obsidian-950 flex items-center justify-center">
+            <img src="assets/spinel_icon.png" alt="Official Spinel Icon" class="w-full h-full object-contain rounded-xl hover:scale-105 transition" />
+          </div>
+          <span class="text-xs font-bold uppercase tracking-wider text-spinel-400 mb-1">Official App Icon</span>
+          <h4 class="text-sm font-semibold text-white">Neon Ruby Markdown Shard</h4>
+          <p class="text-[11px] text-slate-400 mt-1">High-contrast ruby gemstone with integrated Markdown tag badge.</p>
+        </div>
+
+        <!-- Variant A -->
+        <div class="p-5 rounded-2xl bg-obsidian-900 border border-obsidian-800 flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-2xl overflow-hidden mb-4 p-2 bg-obsidian-950 flex items-center justify-center">
+            <img src="assets/spinel_icon_variant_a.jpg" alt="Variant A" class="w-full h-full object-contain rounded-xl hover:scale-105 transition" />
+          </div>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Variant A</span>
+          <h4 class="text-sm font-semibold text-white">Obsidian Shard Classic</h4>
+          <p class="text-[11px] text-slate-400 mt-1">Sleek angular gemstone facets in pure crystalline ruby.</p>
+        </div>
+
+        <!-- Variant B -->
+        <div class="p-5 rounded-2xl bg-obsidian-900 border border-obsidian-800 flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-2xl overflow-hidden mb-4 p-2 bg-obsidian-950 flex items-center justify-center">
+            <img src="assets/spinel_icon_variant_b.jpg" alt="Variant B" class="w-full h-full object-contain rounded-xl hover:scale-105 transition" />
+          </div>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Variant B</span>
+          <h4 class="text-sm font-semibold text-white">Red Flame Shard</h4>
+          <p class="text-[11px] text-slate-400 mt-1">Warm magma gradients and incandescent edges.</p>
+        </div>
+
+        <!-- Variant C -->
+        <div class="p-5 rounded-2xl bg-obsidian-900 border border-obsidian-800 flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-2xl overflow-hidden mb-4 p-2 bg-obsidian-950 flex items-center justify-center">
+            <img src="assets/spinel_icon_variant_c.jpg" alt="Variant C" class="w-full h-full object-contain rounded-xl hover:scale-105 transition" />
+          </div>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Variant C</span>
+          <h4 class="text-sm font-semibold text-white">Minimal Neon Badge</h4>
+          <p class="text-[11px] text-slate-400 mt-1">Clean isometric perspective with glowing red backlight.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 6: Terminal Quickstart & CLI Commands -->
+  <section id="cli" class="py-20 relative z-10 border-t border-obsidian-800 bg-obsidian-900/40">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center mb-12">
+        <h2 class="text-xs font-mono font-semibold uppercase tracking-widest text-spinel-400 mb-2">Developer Quickstart</h2>
+        <h3 class="text-3xl font-extrabold text-white tracking-tight">Get Started in 30 Seconds</h3>
+        <p class="text-slate-400 text-sm mt-2">All tasks orchestrated effortlessly via <code class="text-spinel-400 font-mono">just</code>.</p>
+      </div>
+
+      <!-- Terminal Box with Copy Buttons -->
+      <div class="rounded-2xl bg-obsidian-950 border border-obsidian-800 shadow-2xl overflow-hidden font-mono text-xs sm:text-sm">
+        <div class="bg-obsidian-900 px-4 py-3 border-b border-obsidian-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="mac-traffic-light bg-[#ff5f56]"></span>
+            <span class="mac-traffic-light bg-[#ffbd2e]"></span>
+            <span class="mac-traffic-light bg-[#27c93f]"></span>
+            <span class="text-xs text-slate-400 ml-2 font-sans font-semibold">Terminal — zsh</span>
+          </div>
+          <span class="text-xs text-slate-500 font-mono">macOS / Linux</span>
+        </div>
+
+        <div class="p-6 space-y-6">
+          
+          <!-- Command 1: Clone and test -->
+          <div>
+            <div class="flex items-center justify-between text-slate-400 text-xs mb-1.5 font-sans">
+              <span>1. Clone repository and run full multi-component test suite</span>
+              <button onclick="copyCommand('cmd1')" class="text-spinel-400 hover:text-white transition">Copy</button>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian-900 border border-obsidian-800/80 flex items-center justify-between">
+              <code id="cmd1" class="text-spinel-300">git clone https://github.com/palladius/spinel.git && cd spinel && just test</code>
+            </div>
+          </div>
+
+          <!-- Command 2: Build & run Go CLI -->
+          <div>
+            <div class="flex items-center justify-between text-slate-400 text-xs mb-1.5 font-sans">
+              <span>2. Build the standalone Go CLI power tool</span>
+              <button onclick="copyCommand('cmd2')" class="text-spinel-400 hover:text-white transition">Copy</button>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian-900 border border-obsidian-800/80 flex items-center justify-between">
+              <code id="cmd2" class="text-spinel-300">just build-cli && ./bin/spinel search-frontmatter tag:sre</code>
+            </div>
+          </div>
+
+          <!-- Command 3: Launch Flutter desktop app -->
+          <div>
+            <div class="flex items-center justify-between text-slate-400 text-xs mb-1.5 font-sans">
+              <span>3. Launch Flutter Desktop client on macOS</span>
+              <button onclick="copyCommand('cmd3')" class="text-spinel-400 hover:text-white transition">Copy</button>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian-900 border border-obsidian-800/80 flex items-center justify-between">
+              <code id="cmd3" class="text-spinel-300">just run-app</code>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 border-t border-obsidian-800 bg-obsidian-950 text-xs text-slate-400 relative z-10 font-sans">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <img src="assets/spinel_icon.png" alt="Spinel" class="w-6 h-6 rounded" />
+        <span class="font-bold text-white">Spinel (spinel.md)</span>
+        <span>— Released under the MIT License</span>
+      </div>
+      <div class="flex items-center space-x-6">
+        <a href="https://github.com/palladius/spinel" class="hover:text-spinel-400 transition">GitHub Repository</a>
+        <a href="https://github.com/palladius/spinel/issues" class="hover:text-spinel-400 transition">Issues & Roadmap</a>
+        <a href="https://github.com/palladius/spinel/blob/master/LICENSE" class="hover:text-spinel-400 transition">MIT License</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript for Tabs, Typewriter and Live Sync -->
+  <script>
+    // Tab Switcher Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+      document.querySelectorAll('#tabBar button').forEach(btn => {
+        btn.classList.remove('bg-spinel-600', 'text-white', 'shadow-sm', 'font-semibold');
+        btn.classList.add('text-slate-300');
+      });
+
+      const selectedView = document.getElementById('view-' + tabId);
+      const selectedBtn = document.getElementById('tab-btn-' + tabId);
+      if (selectedView) selectedView.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.add('bg-spinel-600', 'text-white', 'shadow-sm', 'font-semibold');
+        selectedBtn.classList.remove('text-slate-300');
+      }
+    }
+
+    // Markdown Typewriter Animation & Live Render
+    const sampleMarkdown = `---
+title: "Incident Postmortem: Redis Cache Eviction"
+author: "Riccardo @ SRE Team"
+tags: [#postmortem, #redis, #cloud-run]
+encrypted: true (AES-256-GCM)
+---
+
+# Incident 2026-09-18: Cache Outage
+
+Spinel synchronizes note deltas seamlessly across devices.
+
+## 🚀 Key Takeaways
+- [[01-Incident-Response-Guide]]: Follow runbook closely.
+- Verify AES encryption before cloud upload.
+
+> [!NOTE]
+> All encryption keys derived via Argon2id.
+
+### Checklist
+- [x] Rotate Cloud SQL database passwords
+- [x] Configure Terraform IAM least-privilege
+- [ ] Run full performance benchmark suite`;
+
+    const textarea = document.getElementById('markdownInput');
+    const liveRender = document.getElementById('liveRenderOutput');
+    const linesSpan = document.getElementById('editorLines');
+    let typeIndex = 0;
+    let isAutoTyping = true;
+    let typeTimeout = null;
+
+    function renderMarkdownToHtml(md) {
+      let lines = md.split('\n');
+      if (linesSpan) linesSpan.textContent = lines.length;
+      
+      let html = '';
+      let inFrontmatter = false;
+      let frontmatterContent = '';
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+
+        // Frontmatter detection
+        if (line.trim() === '---') {
+          if (!inFrontmatter) {
+            inFrontmatter = true;
+            frontmatterContent = '';
+            continue;
+          } else {
+            inFrontmatter = false;
+            html += `<div class="bg-obsidian-900/90 rounded-lg p-3 border border-obsidian-800 font-mono text-[11px] text-slate-300 mb-3 space-y-0.5">
+                      <div class="text-spinel-400 font-bold mb-1">🏷️ YAML FRONTMATTER</div>
+                      ${frontmatterContent}
+                    </div>`;
+            continue;
+          }
+        }
+
+        if (inFrontmatter) {
+          let parts = line.split(':');
+          if (parts.length > 1) {
+            frontmatterContent += `<div><span class="text-slate-400 font-semibold">${parts[0]}:</span> <span class="text-spinel-300">${parts.slice(1).join(':')}</span></div>`;
+          } else {
+            frontmatterContent += `<div>${line}</div>`;
+          }
+          continue;
+        }
+
+        // Headings
+        if (line.startsWith('# ')) {
+          html += `<h1 class="text-xl font-bold text-white mt-3 mb-1 flex items-center"><span class="text-spinel-500 mr-1.5">#</span>${line.substring(2)}</h1>`;
+        } else if (line.startsWith('## ')) {
+          html += `<h2 class="text-base font-bold text-white mt-3 mb-1 flex items-center"><span class="text-spinel-400 mr-1.5">##</span>${line.substring(3)}</h2>`;
+        } else if (line.startsWith('### ')) {
+          html += `<h3 class="text-sm font-semibold text-white mt-2 mb-1">${line.substring(4)}</h3>`;
+        } 
+        // Callouts
+        else if (line.startsWith('> [!NOTE]')) {
+          html += `<div class="p-3 rounded-lg bg-spinel-950/40 border-l-4 border-spinel-500 border-y border-r border-obsidian-800 text-xs text-slate-200 mt-2">
+                    <div class="font-bold text-spinel-400 mb-0.5">💡 NOTE</div>`;
+        } else if (line.startsWith('> ')) {
+          html += `<div>${line.substring(2)}</div></div>`;
+        }
+        // Checkboxes
+        else if (line.startsWith('- [x] ') || line.startsWith('- [ ] ')) {
+          let checked = line.startsWith('- [x] ');
+          let text = line.substring(6);
+          html += `<div class="flex items-center space-x-2 text-xs py-0.5">
+                    <input type="checkbox" ${checked ? 'checked' : ''} class="rounded text-spinel-600 bg-obsidian-800 border-obsidian-700 accent-spinel-600" />
+                    <span class="${checked ? 'line-through text-slate-400' : 'text-slate-200'}">${text}</span>
+                  </div>`;
+        }
+        // Bullet
+        else if (line.startsWith('- ')) {
+          let parsed = parseInlineSpans(line.substring(2));
+          html += `<div class="flex items-start space-x-2 text-xs py-0.5">
+                    <span class="text-spinel-500 mt-1">•</span>
+                    <span class="text-slate-300">${parsed}</span>
+                  </div>`;
+        }
+        // Empty lines
+        else if (line.trim() === '') {
+          html += `<div class="h-1.5"></div>`;
+        }
+        // Regular paragraphs
+        else {
+          let parsed = parseInlineSpans(line);
+          html += `<p class="text-xs text-slate-300 leading-relaxed">${parsed}</p>`;
+        }
+      }
+
+      liveRender.innerHTML = html;
+    }
+
+    function parseInlineSpans(text) {
+      // Wikilinks [[Note Title]]
+      text = text.replace(/\[\[(.*?)\]\]/g, '<span class="text-spinel-400 font-mono underline decoration-spinel-500/40 cursor-pointer hover:text-spinel-300">📄 $1</span>');
+      // Bold **text**
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
+      // Tags #tag
+      text = text.replace(/#([\w-]+)/g, '<span class="px-1.5 py-0.2 rounded bg-spinel-950 text-spinel-300 text-[10px] font-mono border border-spinel-800">#$1</span>');
+      return text;
+    }
+
+    function typewriterStep() {
+      if (!isAutoTyping) return;
+      
+      if (typeIndex <= sampleMarkdown.length) {
+        textarea.value = sampleMarkdown.slice(0, typeIndex);
+        renderMarkdownToHtml(textarea.value);
+        typeIndex++;
+        // Natural typing speed variation
+        let delay = Math.random() * 25 + 15;
+        if (sampleMarkdown[typeIndex - 1] === '\n') delay = 120;
+        typeTimeout = setTimeout(typewriterStep, delay);
+      } else {
+        // Pause at the end, then restart
+        typeTimeout = setTimeout(() => {
+          typeIndex = 0;
+          typewriterStep();
+        }, 6000);
+      }
+    }
+
+    function toggleAutoType() {
+      isAutoTyping = !isAutoTyping;
+      const statusText = document.getElementById('typewriterStatusText');
+      const statusIcon = document.getElementById('typewriterStatusIcon');
+      if (isAutoTyping) {
+        statusText.textContent = 'Pause Animation';
+        statusIcon.textContent = '⏸️';
+        typewriterStep();
+      } else {
+        statusText.textContent = 'Resume Animation';
+        statusIcon.textContent = '▶️';
+        clearTimeout(typeTimeout);
+      }
+    }
+
+    function restartTypewriter() {
+      clearTimeout(typeTimeout);
+      typeIndex = 0;
+      isAutoTyping = true;
+      document.getElementById('typewriterStatusText').textContent = 'Pause Animation';
+      document.getElementById('typewriterStatusIcon').textContent = '⏸️';
+      typewriterStep();
+    }
+
+    // Manual typing event listener
+    textarea.addEventListener('input', (e) => {
+      if (isAutoTyping) {
+        toggleAutoType(); // Stop auto typing when user starts typing manually
+      }
+      renderMarkdownToHtml(textarea.value);
+    });
+
+    // Copy to clipboard helper
+    function copyCommand(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Command copied to clipboard!');
+      });
+    }
+
+    // Start typewriter when DOM loads
+    window.addEventListener('DOMContentLoaded', () => {
+      typewriterStep();
+    });
+  </script>
+</body>
+</html>

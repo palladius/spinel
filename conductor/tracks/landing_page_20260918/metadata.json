@@ -1,0 +1,13 @@
+{
+  "track_id": "landing_page_20260918",
+  "type": "feature",
+  "status": "completed",
+  "created_at": "2026-09-18T15:17:40+02:00",
+  "updated_at": "2026-09-18T15:17:40+02:00",
+  "description": "Track 4: Spinel Landing Page for GitHub Pages with side-by-side interactive showcase and Ruby/Black aesthetic",
+  "github_issue": {
+    "number": 2,
+    "url": "https://github.com/palladius/spinel/issues/2"
+  },
+  "worktree": "sppinel_landing_page"
+}

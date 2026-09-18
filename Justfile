@@ -36,3 +36,12 @@ run-cli *ARGS:
 # Run Flutter desktop app on macOS
 run-app:
     cd app && flutter run -d macos
+
+# Serve GitHub Pages landing page locally
+serve-docs PORT="8000":
+    @echo "🚀 Serving Spinel landing page at http://localhost:{{PORT}}"
+    python3 -m http.server {{PORT}} --directory docs
+
+# Validate documentation assets and HTML markup
+test-docs:
+    python3 bin/verify_docs.py
