@@ -2,6 +2,15 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
+## [0.6.0] - 2026-09-18
+### Added
+- **GitHub Pages Landing Page (`docs/index.html`)**: Ultra-modern, responsive dark-mode landing page designed with obsidian black, deep ruby red, and crimson spinel flame palette inspired by the official logo.
+- **Side-by-Side Live Showcase ("Tu che scrivi a sx e vedi il risultato a dx")**: Interactive dual-column engine with an automated typewriter simulating markdown editing on the left and real-time synchronized rendering on the right with interactive checklist toggles.
+- **macOS Desktop App Mockup with Interactive Tab Bar**: Realistic window presentation featuring 4 switchable app views (*Live Preview*, *Raw Markdown*, *Cloud Sync Conflict Resolver*, and *Ultra-Dense Vault File Tree*).
+- **Core Pillars & Architecture Overview**: Visual breakdowns for Flutter Desktop/Mobile, Standalone Go CLI, Zero-Knowledge AES-256-GCM Cryptography, and Rails 8 Cloud Run backend.
+- **Logo & Branding Gallery**: Showcase of official app icon and artistic gemstone variants.
+- **Documentation Verification & Tooling**: Added `just serve-docs` and `bin/verify_docs.py` automated asset and markup validator.
+
 ## [0.5.0] - 2026-09-18
 ### Added
 - **Cloud Sync UI & Status Indicator**: Live status icons in the navigation bar (Idle, Syncing spinner, Synced checkmark, Amber Conflict alert, Red Error alert).
