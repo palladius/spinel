@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="docs/assets/spinel_icon.png" alt="Spinel Logo" width="140" height="140" />
-</p>
-
-<h1 align="center">💎 Spinel (<code>spinel.md</code>)</h1>
+<h1 align="center">
+  <img src="docs/assets/spinel_icon.png" alt="Spinel Logo" width="58" height="58" align="center" valign="middle" />
+  Spinel (<code>spinel.md</code>)
+</h1>
 
 <p align="center">
   <strong>The Fast, Local-First, Zero-Knowledge Encrypted Markdown Knowledge Base & Obsidian Alternative.</strong>
