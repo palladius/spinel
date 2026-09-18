@@ -9,3 +9,6 @@
 ---
 - [x] **Track: Two-Way WYSIWYG Editor Canvas & Live Preview**
   *Link: [./tracks/wysiwyg_editor_20260907/index.md](./tracks/wysiwyg_editor_20260907/index.md)*
+---
+- [ ] **Track: Fix New Note Creation Button & Default Today's Date (YYYY-MM-DD)**
+  *Link: [./tracks/fix_new_note_creation_20260918/index.md](./tracks/fix_new_note_creation_20260918/index.md)*
