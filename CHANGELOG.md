@@ -2,6 +2,18 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
+## [0.5.0] - 2026-09-18
+### Added
+- **Cloud Sync UI & Status Indicator**: Live status icons in the navigation bar (Idle, Syncing spinner, Synced checkmark, Amber Conflict alert, Red Error alert).
+- **Interactive 2-Pane Conflict Resolution**: Side-by-side visual diff comparison between Local and Remote versions with 3 one-click resolution choices (*Keep Local*, *Accept Remote*, *Keep Both*).
+- **Zero-Knowledge Encrypted Sync Engine**: SHA-256 content hashing with client-side AES-256 payload encryption.
+- **Custom Brand App Icon**: Obsidian-style faceted ruby shard with Markdown `.md` neon tag badge compiled into native Apple `.icns`.
+- **Root README.md**: Complete project documentation, architecture diagram, badges, and quickstart commands.
+
+### Fixed
+- **Cursor Hit-Testing & Multi-Line Precision**: Fixed vertical line metric hit-testing in the text editor to eliminate cursor jump desync across lines.
+- **Real-Time Live Preview Sync**: Real-time rendering synchronization between the raw markdown editor and the split-screen visual preview pane.
+
 ## [0.4.0] - 2026-09-07
 ### Added
 - **Obsidian-Style Live Preview Engine (`SpinelLivePreviewController`)**: Dynamic hybrid markdown controller that renders rich headings, bold, italic, monospace chips, wikilinks, and tags while revealing raw tokens for precision editing on the active cursor line.
