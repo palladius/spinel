@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:app/models/note_document.dart';
-import 'package:app/services/vault_service.dart';
 import 'package:app/state/vault_provider.dart';
 import 'package:app/state/sync_provider.dart';
 import 'package:app/theme/spinel_theme.dart';
@@ -12,6 +11,7 @@ import 'package:app/widgets/file_tree_sidebar.dart';
 import 'package:app/widgets/frontmatter_dialog.dart';
 import 'package:app/widgets/sync_dialog.dart';
 import 'package:app/widgets/conflict_resolution_dialog.dart';
+import 'package:app/widgets/new_note_dialog.dart';
 
 void main() {
   runApp(const ProviderScope(child: SpinelApp()));
@@ -128,115 +128,7 @@ class _SpinelHomeScreenState extends ConsumerState<SpinelHomeScreen> {
   }
 
   void _createNewNoteDialog() {
-    final titleController = TextEditingController();
-    final selectedNote = ref.read(selectedNoteProvider);
-    final vaultNodes = ref.read(vaultNodesProvider).value ?? [];
-
-    final folderList = <String>['/ (Root)'];
-    void extractDirs(List<VaultFileNode> nodes) {
-      for (final n in nodes) {
-        if (n.isDirectory) {
-          folderList.add(n.relativePath);
-          extractDirs(n.children);
-        }
-      }
-    }
-    extractDirs(vaultNodes);
-
-    String selectedFolder = folderList.first;
-    if (selectedNote != null) {
-      final parentDir = p.dirname(selectedNote.relativePath);
-      if (parentDir != '.' && folderList.contains(parentDir)) {
-        selectedFolder = parentDir;
-      }
-    } else if (folderList.contains('01_Daily_Notes')) {
-      selectedFolder = '01_Daily_Notes';
-    } else if (folderList.contains('notes')) {
-      selectedFolder = 'notes';
-    }
-
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              backgroundColor: SpinelTheme.darkCard,
-              title: const Text('Create New Note', style: TextStyle(color: SpinelTheme.brightText, fontSize: 14)),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: titleController,
-                    autofocus: true,
-                    style: const TextStyle(color: SpinelTheme.brightText, fontSize: 13),
-                    decoration: const InputDecoration(
-                      hintText: 'Note Title (e.g. SRE Architecture)',
-                      hintStyle: TextStyle(color: SpinelTheme.slateText, fontSize: 12),
-                      isDense: true,
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.borderColor)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: SpinelTheme.rubyPrimary)),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  const Text('Save in folder:', style: TextStyle(color: SpinelTheme.slateText, fontSize: 11.5)),
-                  const SizedBox(height: 6),
-                  DropdownButtonFormField<String>(
-                    value: selectedFolder,
-                    dropdownColor: SpinelTheme.darkCard,
-                    isDense: true,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: SpinelTheme.darkInput,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: SpinelTheme.borderColor)),
-                    ),
-                    style: const TextStyle(color: SpinelTheme.brightText, fontSize: 12),
-                    items: folderList.map((f) => DropdownMenuItem(value: f, child: Text(f))).toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setDialogState(() {
-                          selectedFolder = val;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  child: const Text('Cancel', style: TextStyle(color: SpinelTheme.slateText, fontSize: 12)),
-                  onPressed: () => Navigator.pop(ctx),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: SpinelTheme.rubyPrimary, visualDensity: VisualDensity.compact),
-                  child: const Text('Create Note', style: TextStyle(color: Colors.white, fontSize: 12)),
-                  onPressed: () async {
-                    final title = titleController.text.trim();
-                    if (title.isEmpty) return;
-                    Navigator.pop(ctx);
-
-                    final vaultPath = ref.read(vaultPathProvider);
-                    if (vaultPath == null) return;
-                    final filename = '${title.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_')}.md';
-                    
-                    final targetRelPath = selectedFolder == '/ (Root)' 
-                        ? filename 
-                        : p.join(selectedFolder, filename);
-
-                    final service = ref.read(vaultServiceProvider);
-                    final doc = await service.createNote(vaultPath, targetRelPath, title);
-                    ref.read(selectedNoteProvider.notifier).setNote(doc);
-                    ref.invalidate(vaultNodesProvider);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    NewNoteDialog.show(context);
   }
 
   @override

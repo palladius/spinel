@@ -38,26 +38,32 @@ class FileTreeSidebar extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: onSelectVault,
-                  borderRadius: BorderRadius.circular(3),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                    child: Row(
-                      children: [
-                        const Text('💎', style: TextStyle(fontSize: 11)),
-                        const SizedBox(width: 5),
-                        Text(
-                          vaultName,
-                          style: const TextStyle(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w600,
-                            color: SpinelTheme.softText,
+                Expanded(
+                  child: InkWell(
+                    onTap: onSelectVault,
+                    borderRadius: BorderRadius.circular(3),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                      child: Row(
+                        children: [
+                          const Text('💎', style: TextStyle(fontSize: 11)),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Text(
+                              vaultName,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w600,
+                                color: SpinelTheme.softText,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 2),
-                        const Icon(Icons.arrow_drop_down, size: 14, color: SpinelTheme.slateText),
-                      ],
+                          const SizedBox(width: 2),
+                          const Icon(Icons.arrow_drop_down, size: 14, color: SpinelTheme.slateText),
+                        ],
+                      ),
                     ),
                   ),
                 ),

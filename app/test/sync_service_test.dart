@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:app/services/sync_service.dart';
-import 'package:app/state/sync_provider.dart';
-import 'package:app/state/vault_provider.dart';
 import 'package:app/widgets/sync_dialog.dart';
 import 'package:app/widgets/conflict_resolution_dialog.dart';
 
