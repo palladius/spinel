@@ -8,6 +8,7 @@
 </p>
 
 <p align="center">
+  <a href="https://palladius.github.io/spinel/"><img src="https://img.shields.io/badge/website-palladius.github.io%2Fspinel-e11d48.svg?logo=googlechrome&logoColor=white" alt="Website" /></a>
   <a href="https://github.com/palladius/spinel/actions"><img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Status" /></a>
   <a href="https://github.com/palladius/spinel/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-red.svg" alt="License" /></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Desktop%20%7C%20Mobile-02569B.svg?logo=flutter" alt="Flutter" /></a>
