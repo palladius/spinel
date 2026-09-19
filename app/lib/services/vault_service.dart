@@ -74,7 +74,7 @@ class VaultService {
           ));
         }
       }
-    } on FileSystemException catch (e) {
+    } on FileSystemException {
       // If a subfolder is unreadable, record error or skip gracefully
       parentList.add(VaultFileNode(
         path: currentDir.path,
@@ -115,20 +115,22 @@ class VaultService {
   Future<void> saveNoteAtomic(NoteDocument doc) async {
     final file = File(doc.filePath);
     final dir = file.parent;
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
     }
 
     final tmpFile = File('${doc.filePath}.spinel_tmp_${DateTime.now().millisecondsSinceEpoch}');
-    await tmpFile.writeAsString(doc.toRawContent(), flush: true);
-    await tmpFile.rename(doc.filePath);
+    tmpFile.writeAsStringSync(doc.toRawContent(), flush: true);
+    tmpFile.renameSync(doc.filePath);
     doc.isModified = false;
   }
 
   Future<NoteDocument> createNote(String rootPath, String relativePath, String title) async {
     final fullPath = p.join(rootPath, relativePath);
     final file = File(fullPath);
-    await file.parent.create(recursive: true);
+    if (!file.parent.existsSync()) {
+      file.parent.createSync(recursive: true);
+    }
 
     final initialContent = '''---
 title: "$title"
