@@ -12,3 +12,7 @@
 ---
 - [x] **Track: Spinel Landing Page for GitHub Pages**
   *Link: [./tracks/landing_page_20260918/index.md](./tracks/landing_page_20260918/index.md)*
+---
+- [x] **Track: Verifica PUBBLICAZIONE di un GH repo privato**
+  *Link: [./tracks/verify_repo_publication_20260919/index.md](./tracks/verify_repo_publication_20260919/index.md)*
+
