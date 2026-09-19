@@ -2,6 +2,15 @@
 
 All notable changes to the Spinel project will be documented in this file.
 
+## [0.4.1] - 2026-09-18
+### Fixed
+- **New Note Creation Dialog**: Fixed silent exit bug where empty title inputs returned without action; extracted robust, testable `NewNoteDialog` widget.
+- **Sidebar Header Layout**: Resolved RenderFlex overflow on small window widths using `Expanded` and text ellipsis truncation.
+
+### Added
+- **Default Daily Note Title (YYYY-MM-DD)**: Pre-populates note title with current date (`YYYY-MM-DD.md`) pre-selected for instant creation or quick overwrite.
+- **Automated Test Coverage**: Added dedicated widget tests in `app/test/new_note_dialog_test.dart`.
+
 ## [0.4.0] - 2026-09-07
 ### Added
 - **Obsidian-Style Live Preview Engine (`SpinelLivePreviewController`)**: Dynamic hybrid markdown controller that renders rich headings, bold, italic, monospace chips, wikilinks, and tags while revealing raw tokens for precision editing on the active cursor line.
