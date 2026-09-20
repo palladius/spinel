@@ -9,7 +9,8 @@ All notable changes to the Spinel project will be documented in this file.
 
 ### Added
 - **Default Daily Note Title (YYYY-MM-DD)**: Pre-populates note title with current date (`YYYY-MM-DD.md`) pre-selected for instant creation or quick overwrite.
-- **Automated Test Coverage**: Added dedicated widget tests in `app/test/new_note_dialog_test.dart`.
+- **Smart Word Selection for Formatting Bar**: Clicking inline formatting buttons (Bold, Italic, Underline, Strikethrough, Code) with a collapsed cursor standing inside a word automatically expands the selection to wrap the entire word (e.g. `st|ai` -> `**stai**` instead of `st****ai`).
+- **Automated Test Coverage**: Added dedicated widget tests in `app/test/new_note_dialog_test.dart` and `app/test/wysiwyg_editor_test.dart`.
 
 ## [0.4.0] - 2026-09-07
 ### Added

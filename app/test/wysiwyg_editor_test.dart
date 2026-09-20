@@ -7,6 +7,7 @@ import 'package:app/editor/autocomplete_overlay.dart';
 import 'package:app/models/note_document.dart';
 import 'package:app/state/vault_provider.dart';
 import 'package:app/widgets/dual_mode_editor.dart';
+import 'package:app/widgets/floating_formatting_bar.dart';
 
 void main() {
   group('SpinelLivePreviewController', () {
@@ -265,6 +266,36 @@ void main() {
 
       expect(find.byType(TextField), findsOneWidget);
       expect(find.text('Test Document'), findsWidgets);
+    });
+  });
+
+  group('FloatingFormattingBar Smart Word Selection', () {
+    testWidgets('automatically expands collapsed cursor to full word for inline formatting', (tester) async {
+      final controller = TextEditingController(text: 'Ciao come stai ?');
+      // Position cursor inside "stai" between 't' and 'a': index 12 ("Ciao come st|ai ?")
+      controller.selection = const TextSelection.collapsed(offset: 12);
+      bool changed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: FloatingFormattingBar(
+              controller: controller,
+              onChanged: () => changed = true,
+            ),
+          ),
+        ),
+      );
+
+      // Tap bold button 'B'
+      await tester.tap(find.text('B'));
+      await tester.pumpAndSettle();
+
+      expect(changed, isTrue);
+      // It should format the entire word "stai" to "**stai**", NOT "st****ai"
+      expect(controller.text, equals('Ciao come **stai** ?'));
+      expect(controller.selection.start, equals(12)); // inside or around formatted word
+      expect(controller.selection.end, equals(16));
     });
   });
 }

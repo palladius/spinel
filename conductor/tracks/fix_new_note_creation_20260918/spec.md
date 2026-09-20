@@ -23,10 +23,15 @@ Nel file `app/lib/main.dart` all'interno del metodo `_createNewNoteDialog()`:
    - Chiude il dialog (`Navigator.pop(ctx)`).
    - Invalida il provider dell'albero dei file (`ref.invalidate(vaultNodesProvider)`) e seleziona la nota creata nell'editor.
 
+5. **Smart Word Selection per la Formattazione Inline (`FloatingFormattingBar`)**:
+   - Quando l'utente clicca su un'opzione di formattazione inline (es. Bold `**`, Italic `*`, Strikethrough `~~`, Underline `<u>`, Code `` ` ``) con una selezione collassata (cursore fermo all'interno o al limite di una parola, es. `st|ai`), la toolbar espande automaticamente la selezione all'intera parola circostante (`stai` -> `**stai**`), evitando di spezzare la parola con formattazioni tipo `st****ai`.
+   - Se il cursore si trova su spazi vuoti o a inizio/fine riga senza parola adiacente, inserisce i delimitatori posizionando il cursore all'interno (`**|**`).
+
 ## 4. Acceptance Criteria
 - Aprendo il dialog "Create New Note", il campo titolo contiene la data di oggi (`YYYY-MM-DD`).
 - Cliccando su "Create Note" (il secondo bottone), il file viene creato su disco nella cartella indicata e aperto nell'editor.
 - Se l'utente modifica il titolo (es. `SRE Architecture`), viene creato `sre_architecture.md`.
+- Cliccando sul pulsante Bold con cursore a metà di una parola (es. `ciao`), la parola intera viene formattata in `**ciao**`.
 - Test automatici widget e unit test passanti al 100%.
 
 ## 5. Linked GitHub Issue

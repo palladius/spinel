@@ -16,15 +16,43 @@ class FloatingFormattingBar extends StatelessWidget {
     final selection = controller.selection;
     if (!selection.isValid) return;
 
-    final selectedText = text.substring(selection.start, selection.end);
+    int start = selection.start;
+    int end = selection.end;
+
+    // If selection is collapsed (cursor standing still), expand to surrounding word
+    if (selection.isCollapsed) {
+      final isWordChar = (int code) {
+        // Alphanumeric, underscore, or non-ASCII letters (accented characters like à, è, etc.)
+        return (code >= 48 && code <= 57) || // 0-9
+            (code >= 65 && code <= 90) || // A-Z
+            (code >= 97 && code <= 122) || // a-z
+            code == 95 || // _
+            code > 127; // accented / unicode letters
+      };
+
+      // Check if cursor is adjacent to or inside a word
+      final canExpandLeft = start > 0 && isWordChar(text.codeUnitAt(start - 1));
+      final canExpandRight = end < text.length && isWordChar(text.codeUnitAt(end));
+
+      if (canExpandLeft || canExpandRight) {
+        while (start > 0 && isWordChar(text.codeUnitAt(start - 1))) {
+          start--;
+        }
+        while (end < text.length && isWordChar(text.codeUnitAt(end))) {
+          end++;
+        }
+      }
+    }
+
+    final selectedText = text.substring(start, end);
     final replacement = '$prefix$selectedText$suffix';
-    final newText = text.replaceRange(selection.start, selection.end, replacement);
+    final newText = text.replaceRange(start, end, replacement);
 
     controller.value = TextEditingValue(
       text: newText,
       selection: TextSelection(
-        baseOffset: selection.start + prefix.length,
-        extentOffset: selection.start + prefix.length + selectedText.length,
+        baseOffset: start + prefix.length,
+        extentOffset: start + prefix.length + selectedText.length,
       ),
     );
     onChanged();
