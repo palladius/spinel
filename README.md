@@ -1,10 +1,15 @@
 <h1 align="center">
-  <img src="docs/assets/spinel_icon.png" alt="Spinel Logo" width="58" height="58" align="center" valign="middle" />
-  Spinel (<code>spinel.md</code>)
+  <a href="https://palladius.github.io/spinel/">
+    <img src="docs/assets/spinel_icon.png" alt="Spinel Logo" width="58" height="58" align="center" valign="middle" />
+  </a>
+  <a href="https://palladius.github.io/spinel/" style="text-decoration: none; color: inherit;">
+    Spinel (<code>spinel.md</code>)
+  </a>
 </h1>
 
 <p align="center">
-  <strong>The Fast, Local-First, Zero-Knowledge Encrypted Markdown Knowledge Base & Obsidian Alternative.</strong>
+  <strong>The Fast, Local-First, Zero-Knowledge Encrypted Markdown Knowledge Base & Obsidian Alternative.</strong><br />
+  🌐 <strong><a href="https://palladius.github.io/spinel/">palladius.github.io/spinel</a></strong>
 </p>
 
 <p align="center">
